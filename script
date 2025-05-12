@@ -68,7 +68,7 @@ GameTab:CreateButton({
         else
             Rayfield:Notify({
                 Title = "Wrong Game",
-                Content = "Teleport to Tower of Hell to use this script.",
+                Content = "Join Tower of Hell to use this script.",
                 Duration = 5,
             })
         end
@@ -246,5 +246,78 @@ PlayerTab:CreateToggle({
     CurrentValue = false,
     Callback = function(Value)
         espEnabled = Value
+    end,
+})
+
+-- Server Hop
+SettingsTab:CreateButton({
+    Name = "Server Hop",
+    Callback = function()
+        local HttpService = game:GetService("HttpService")
+        local TeleportService = game:GetService("TeleportService")
+        local PlaceId = game.PlaceId
+        local Servers = {}
+
+        local function serverHop()
+            local success, response = pcall(function()
+                return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"))
+            end)
+
+            if success and response and response.data then
+                for _, server in ipairs(response.data) do
+                    if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                        TeleportService:TeleportToPlaceInstance(PlaceId, server.id, Player)
+                        break
+                    end
+                end
+            end
+        end
+
+        serverHop()
+    end,
+})
+
+-- Rejoin
+SettingsTab:CreateButton({
+    Name = "Rejoin Server",
+    Callback = function()
+        game:GetService("TeleportService"):Teleport(game.PlaceId, Player)
+    end,
+})
+
+-- Anti-AFK
+SettingsTab:CreateToggle({
+    Name = "Anti-AFK",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            getgenv().AntiAFKConnection = Player.Idled:Connect(function()
+                VirtualUser = game:GetService("VirtualUser")
+                VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+                task.wait(1)
+                VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+            end)
+        else
+            if getgenv().AntiAFKConnection then
+                getgenv().AntiAFKConnection:Disconnect()
+                getgenv().AntiAFKConnection = nil
+            end
+        end
+    end,
+})
+
+-- Arsenal Script
+GameTab:CreateButton({
+    Name = "Arsenal Script",
+    Callback = function()
+        if game.PlaceId == 286090429 then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Johnny39871/ArsenalScript/main/Script"))()
+        else
+            Rayfield:Notify({
+                Title = "Wrong Game",
+                Content = "Join Arsenal to use this script.",
+                Duration = 5,
+            })
+        end
     end,
 })
