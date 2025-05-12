@@ -321,3 +321,49 @@ GameTab:CreateButton({
         end
     end,
 })
+
+-- [Silent Aimbot Additions for Multiple Games]
+
+local silentAimbotEnabled = false local function getClosestPlayerToMouse() local closest, distance = nil, math.huge for _, plr in ipairs(Players:GetPlayers()) do if plr ~= Player and plr.Character and plr.Character:FindFirstChild("Head") then local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(plr.Character.Head.Position) if onScreen then local mousePos = UserInputService:GetMouseLocation() local mag = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(mousePos.X, mousePos.Y)).Magnitude if mag < distance then closest = plr distance = mag end end end end return closest end
+
+local oldNamecall oldNamecall = hookmetamethod(game, "__namecall", function(self, ...) local args = { ... } local method = getnamecallmethod()
+
+if silentAimbotEnabled then
+    if game.PlaceId == 286090429 and tostring(self) == "HitPart" and method == "FireServer" then -- Arsenal
+        local target = getClosestPlayerToMouse()
+        if target and target.Character and target.Character:FindFirstChild("Head") then
+            args[2] = target.Character.Head
+            args[3] = target.Character.Head.Position
+            return oldNamecall(self, unpack(args))
+        end
+    elseif game.PlaceId == 66654135 and tostring(self) == "ShootGun" and method == "FireServer" then -- MM2
+        local target = getClosestPlayerToMouse()
+        if target and target.Character and target.Character:FindFirstChild("Head") then
+            local shootDir = (target.Character.Head.Position - workspace.CurrentCamera.CFrame.Position).Unit * 500
+            args[1] = workspace.CurrentCamera.CFrame.Position
+            args[2] = shootDir
+            return oldNamecall(self, unpack(args))
+        end
+    elseif game.PlaceId == 292439477 and tostring(self) == "HitDetection" and method == "FireServer" then -- Phantom Forces
+        local target = getClosestPlayerToMouse()
+        if target and target.Character and target.Character:FindFirstChild("Head") then
+            args[2] = target.Character.Head
+            args[3] = target.Character.Head.Position
+            return oldNamecall(self, unpack(args))
+        end
+    end
+end
+
+return oldNamecall(self, ...)
+
+end)
+
+PlayerTab:CreateToggle({
+Name = "Silent Aimbot",
+CurrentValue = false,
+Callback = function(Value)
+silentAimbotEnabled = Value
+end,
+})
+
+
