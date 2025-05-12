@@ -73,7 +73,14 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
+-- Variable --
 
+local Players = game:GetService(Players)
+local TPService = game:GetService(TeleportService)
+local Player = game.Players.LocalPlayer
+
+
+--------------
 
 --- Tabs Section ---
 
@@ -87,12 +94,6 @@ local OtherTab = Window:CreateTab("Other", 4483362458)
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
 -------------------
-
--- Sections --
-
-local AutoFarmSection = GameTab:CreateSection("Auto Farm")
-
---------------------
 
 local Keybind = SettingsTab:CreateKeybind({
    Name = "Destroy UI",
@@ -113,7 +114,7 @@ local Toggle = GameTab:CreateToggle({
 
        spawn(function()
            while _G.Auto do
-               local rootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+               local rootPart = game.Player.Character:FindFirstChild("HumanoidRootPart")
                if rootPart then
                    for i, v in pairs(game:GetService("Workspace").Hoops:GetChildren()) do
                        rootPart.CFrame = v.CFrame
@@ -216,7 +217,7 @@ MainTab:AddButton({
 		end
 
 		-- Teleport the player
-		local char = game.Players.LocalPlayer.Character
+		local char = game.Player.Character
 		if char and char:FindFirstChild("HumanoidRootPart") then
 			char.HumanoidRootPart.CFrame = part.CFrame
 		end
@@ -242,8 +243,7 @@ h.Parent = game.Players.LocalPlayer.Backpack
 MainTab:AddButton({
 	Name = "God mode",
 	Callback = function()
-local player = game.Players.LocalPlayer
-local character = player.Character
+local character = Player.Character
 
 function GodMode()
     character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
@@ -293,11 +293,10 @@ local Input = PlayerTab:CreateInput({
    Flag = "Input1",
    Callback = function(Text)
        local TargetPlayer = game.Players:FindFirstChild(Text)
-       local LocalPlayer = game.Players.LocalPlayer
 
        if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-           if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-               LocalPlayer.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
+           if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+               Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
            end
        else
            warn("Target player or their character not found.")
@@ -313,7 +312,7 @@ PlayerTab:CreateSlider({
     Suffix = "Speed",
     CurrentValue = 16,
     Callback = function(Value)
-        local character = game.Players.LocalPlayer.Character
+        local character = game.Player.Character
         if character then
             local humanoid = character:FindFirstChildOfClass("Humanoid")
             if humanoid then
@@ -323,8 +322,6 @@ PlayerTab:CreateSlider({
     end,
 })
 
-
-
 -- JumpPower Slider: Adjusts the player's jump power
 PlayerTab:CreateSlider({
     Name = "JumpPower",
@@ -332,7 +329,7 @@ PlayerTab:CreateSlider({
     Increment = 1,
     CurrentValue = 50,
     Callback = function(Value)
-        local character = game.Players.LocalPlayer.Character
+        local character = game.Player.Character
         if character then
             local humanoid = character:FindFirstChildOfClass("Humanoid")
             if humanoid then
@@ -354,7 +351,7 @@ PlayerTab:CreateToggle({
 -- Connect Infinite Jump to the jump event
 game:GetService("UserInputService").JumpRequest:Connect(function()
     if infiniteJumpEnabled then
-        local character = game.Players.LocalPlayer.Character
+        local character = game.Player.Character
         if character then
             local humanoid = character:FindFirstChildOfClass("Humanoid")
             if humanoid then
@@ -374,7 +371,7 @@ PlayerTab:CreateToggle({
         if noclipEnabled then
             spawn(function()
                 while noclipEnabled and wait() do
-                    local character = game.Players.LocalPlayer.Character
+                    local character = game.Player.Character
                     if character then
                         for _, part in ipairs(character:GetDescendants()) do
                             if part:IsA("BasePart") then
@@ -388,30 +385,10 @@ PlayerTab:CreateToggle({
     end,
 })
 
--- Teleport to Spawn Button: Moves your character to the spawn location
-PlayerTab:CreateButton({
-    Name = "Teleport to Spawn",
-    Callback = function()
-        local spawnLocation = workspace:FindFirstChild("SpawnLocation") or workspace:FindFirstChildWhichIsA("SpawnLocation")
-        if spawnLocation then
-            game.Players.LocalPlayer.Character:MoveTo(spawnLocation.Position)
-        else
-            warn("No spawn location found!")
-        end
-    end,
-})
-
--- Reset Character Button: Reloads your character
-PlayerTab:CreateButton({
-    Name = "Reset Character",
-    Callback = function()
-        game.Players.LocalPlayer:LoadCharacter()
-    end,
-})
 -- ESP Feature
 local espEnabled = false
 local espFolder = Instance.new("Folder", game.CoreGui)
-espFolder.Name = "MyESPHighlights"
+espFolder.Name = "ESP"
 
 game.Players.PlayerRemoving:Connect(removeHighlight)
 -- Function to create ESP highlight for a player
