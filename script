@@ -51,6 +51,13 @@ OtherTab:CreateButton({
     end,
 })
 
+OtherTab:CreateButton({
+    Name = "Prison Life (PrisonWare",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Denverrz/scripts/master/PRISONWARE_v1.3.txt"))();
+    end,
+})
+
 -- Blox Fruits (Redz Hub)
 GameTab:CreateButton({
     Name = "Blox Fruits (Redz Hub)",
@@ -257,6 +264,7 @@ SettingsTab:CreateButton({
         local TeleportService = game:GetService("TeleportService")
         local PlaceId = game.PlaceId
         local Servers = {}
+        local Player = game.Players.LocalPlayer
 
         local function serverHop()
             local success, response = pcall(function()
@@ -266,6 +274,7 @@ SettingsTab:CreateButton({
             if success and response and response.data then
                 for _, server in ipairs(response.data) do
                     if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                        queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/MehDelight/Eclipse-UI/refs/heads/main/script'))()")
                         TeleportService:TeleportToPlaceInstance(PlaceId, server.id, Player)
                         break
                     end
@@ -277,11 +286,14 @@ SettingsTab:CreateButton({
     end,
 })
 
--- Rejoin
+-- Rejoin Button --
+
 SettingsTab:CreateButton({
     Name = "Rejoin Server",
     Callback = function()
-        game:GetService("TeleportService"):Teleport(game.PlaceId, Player)
+        local TeleportService = game:GetService("TeleportService")
+        queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/MehDelight/Eclipse-UI/refs/heads/main/script'))()")
+        TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
     end,
 })
 
