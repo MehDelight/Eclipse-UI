@@ -2,6 +2,11 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Player = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local Camera = workspace.CurrentCamera
+local AimbotEnabled = false
+local AimbotFOV = 100
+
 
 -- Load Rayfield UI Library
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -43,6 +48,14 @@ SettingsTab:CreateKeybind({
     end,
 })
 
+PlayerTab:CreateToggle({
+    Name = "Aimbot",
+    CurrentValue = false,
+    Callback = function(Value)
+        AimbotEnabled = Value
+    end,
+})
+
 -- Infinite Yield
 OtherTab:CreateButton({
     Name = "Infinite Yield",
@@ -52,7 +65,7 @@ OtherTab:CreateButton({
 })
 
 OtherTab:CreateButton({
-    Name = "Prison Life (PrisonWare",
+    Name = "Prison Life (PrisonWare)",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Denverrz/scripts/master/PRISONWARE_v1.3.txt"))();
     end,
@@ -64,6 +77,29 @@ local BFButton = GameTab:CreateButton({
    Callback = function()
    
    loadstring(game:HttpGet("https://raw.githubusercontent.com/newredz/BloxFruits/refs/heads/main/Source.luau"))(Settings)
+end,
+})
+
+GameTab:CreateButton({
+    Name = "Arsenal Script",
+    Callback = function()
+        if game.PlaceId == 286090429 then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Johnny39871/ArsenalScript/main/Script"))()
+        else
+            Rayfield:Notify({
+                Title = "Wrong Game",
+                Content = "Join Arsenal to use this script.",
+                Duration = 5,
+            })
+        end
+    end,
+})
+
+local DRButton = GameTab:CreateButton({
+   Name = "Dead Rails (Nat Hub)"
+   Callback = function()
+
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))()
 end,
 })
 
@@ -425,22 +461,6 @@ SettingsTab:CreateToggle({
     end,
 })
 
--- Arsenal Script
-GameTab:CreateButton({
-    Name = "Arsenal Script",
-    Callback = function()
-        if game.PlaceId == 286090429 then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/Johnny39871/ArsenalScript/main/Script"))()
-        else
-            Rayfield:Notify({
-                Title = "Wrong Game",
-                Content = "Join Arsenal to use this script.",
-                Duration = 5,
-            })
-        end
-    end,
-})
-
 -- [Silent Aimbot Additions for Multiple Games]
 
 local silentAimbotEnabled = false local function getClosestPlayerToMouse() local closest, distance = nil, math.huge for _, plr in ipairs(Players:GetPlayers()) do if plr ~= Player and plr.Character and plr.Character:FindFirstChild("Head") then local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(plr.Character.Head.Position) if onScreen then local mousePos = UserInputService:GetMouseLocation() local mag = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(mousePos.X, mousePos.Y)).Magnitude if mag < distance then closest = plr distance = mag end end end end return closest end
@@ -485,4 +505,30 @@ silentAimbotEnabled = Value
 end,
 })
 
+local function getClosestPlayer()
+    local closest, shortestDistance = nil, AimbotFOV
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= Player and plr.Character and plr.Character:FindFirstChild("Head") then
+            local screenPos, onScreen = Camera:WorldToViewportPoint(plr.Character.Head.Position)
+            if onScreen then
+                local viewportSize = Camera.ViewportSize
+                local screenCenter = Vector2.new(viewportSize.X / 2, viewportSize.Y / 2)
+                local distance = (Vector2.new(screenPos.X, screenPos.Y) - screenCenter).Magnitude
+                if distance < shortestDistance then
+                    closest = plr
+                    shortestDistance = distance
+                end
+            end
+        end
+    end
+    return closest
+end
 
+RunService.RenderStepped:Connect(function()
+    if AimbotEnabled then
+        local target = getClosestPlayer()
+        if target and target.Character and target.Character:FindFirstChild("Head") then
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Character.Head.Position)
+        end
+    end
+end)
