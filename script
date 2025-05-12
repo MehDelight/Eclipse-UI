@@ -96,7 +96,7 @@ GameTab:CreateButton({
 })
 
 local DRButton = GameTab:CreateButton({
-   Name = "Dead Rails (Nat Hub)"
+   Name = "Dead Rails (Nat Hub)",
    Callback = function()
 
    loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))()
@@ -463,7 +463,9 @@ SettingsTab:CreateToggle({
 
 -- [Silent Aimbot Additions for Multiple Games]
 
-local silentAimbotEnabled = false local function getClosestPlayerToMouse() local closest, distance = nil, math.huge for _, plr in ipairs(Players:GetPlayers()) do if plr ~= Player and plr.Character and plr.Character:FindFirstChild("Head") then local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(plr.Character.Head.Position) if onScreen then local mousePos = UserInputService:GetMouseLocation() local mag = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(mousePos.X, mousePos.Y)).Magnitude if mag < distance then closest = plr distance = mag end end end end return closest end
+local silentAimbotEnabled = false
+
+local function getClosestPlayerToMouse() local closest, distance = nil, math.huge for _, plr in ipairs(Players:GetPlayers()) do if plr ~= Player and plr.Character and plr.Character:FindFirstChild("Head") then local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(plr.Character.Head.Position) if onScreen then local mousePos = UserInputService:GetMouseLocation() local mag = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(mousePos.X, mousePos.Y)).Magnitude if mag < distance then closest = plr distance = mag end end end end return closest end
 
 local oldNamecall oldNamecall = hookmetamethod(game, "__namecall", function(self, ...) local args = { ... } local method = getnamecallmethod()
 
