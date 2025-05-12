@@ -1,66 +1,21 @@
+-- Services
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Player = Players.LocalPlayer
 
--- Load Rayfield Library
+-- Load Rayfield UI Library
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- Create the Window
--- Create the Window with a custom Eclipse-inspired theme
+-- Create Main Window
 local Window = Rayfield:CreateWindow({
     Name = "Eclipse UI",
     LoadingTitle = "Welcome to the Void",
     LoadingSubtitle = "by Delight",
-    
-    TextColor = Color3.fromRGB(230, 230, 255),
-
-    Background = Color3.fromRGB(15, 15, 30),
-    Topbar = Color3.fromRGB(25, 25, 50),
-    Shadow = Color3.fromRGB(10, 10, 20),
-
-    NotificationBackground = Color3.fromRGB(20, 20, 35),
-    NotificationActionsBackground = Color3.fromRGB(160, 140, 255),
-
-    TabBackground = Color3.fromRGB(45, 45, 65),
-    TabStroke = Color3.fromRGB(90, 60, 150),
-    TabBackgroundSelected = Color3.fromRGB(160, 140, 255),
-    TabTextColor = Color3.fromRGB(200, 200, 255),
-    SelectedTabTextColor = Color3.fromRGB(30, 20, 40),
-
-    ElementBackground = Color3.fromRGB(35, 35, 50),
-    ElementBackgroundHover = Color3.fromRGB(45, 45, 60),
-    SecondaryElementBackground = Color3.fromRGB(25, 25, 35),
-    ElementStroke = Color3.fromRGB(90, 60, 150),
-    SecondaryElementStroke = Color3.fromRGB(60, 40, 100),
-            
-    SliderBackground = Color3.fromRGB(160, 140, 255),
-    SliderProgress = Color3.fromRGB(180, 160, 255),
-    SliderStroke = Color3.fromRGB(190, 170, 255),
-
-    ToggleBackground = Color3.fromRGB(35, 30, 50),
-    ToggleEnabled = Color3.fromRGB(190, 140, 255),
-    ToggleDisabled = Color3.fromRGB(80, 80, 80),
-    ToggleEnabledStroke = Color3.fromRGB(200, 160, 255),
-    ToggleDisabledStroke = Color3.fromRGB(100, 100, 100),
-    ToggleEnabledOuterStroke = Color3.fromRGB(80, 60, 150),
-    ToggleDisabledOuterStroke = Color3.fromRGB(65, 65, 65),
-
-    DropdownSelected = Color3.fromRGB(40, 40, 60),
-    DropdownUnselected = Color3.fromRGB(30, 30, 45),
-
-    InputBackground = Color3.fromRGB(30, 30, 45),
-    InputStroke = Color3.fromRGB(90, 60, 150),
-    PlaceholderColor = Color3.fromRGB(160, 160, 200),
-
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "EclipseConfigs",
         FileName = "EclipseSettings"
     },
-
-    Discord = {
-        Enabled = false,
-        Invite = "",
-        RememberJoins = true
-    },
-
     KeySystem = true,
     KeySettings = {
         Title = "A Nightmare",
@@ -73,238 +28,96 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Variable --
-
-local Players = game:GetService(Players)
-local TPService = game:GetService(TeleportService)
-local Player = game.Players.LocalPlayer
-
-
---------------
-
---- Tabs Section ---
-
-
-local PlayerTab = Window:CreateTab("Player", 75691879409782)
-
+-- Tabs
+local PlayerTab = Window:CreateTab("Player", 4483362458)
 local GameTab = Window:CreateTab("Games", 4483362458)
-
 local OtherTab = Window:CreateTab("Other", 4483362458)
-
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
--------------------
-
-local Keybind = SettingsTab:CreateKeybind({
-   Name = "Destroy UI",
-   CurrentKeybind = "Q",
-   HoldToInteract = false,
-   Flag = "Keybind1",
-   Callback = function(Keybind)
-   Rayfield:Destroy()
-   end,
+-- Destroy UI
+SettingsTab:CreateKeybind({
+    Name = "Destroy UI",
+    CurrentKeybind = "Q",
+    Callback = function()
+        Rayfield:Destroy()
+    end,
 })
 
-local Toggle = GameTab:CreateToggle({
-   Name = "Legends of Speed Auto Hoops",
-   CurrentValue = false,
-   Flag = "AutoHoopsToggle1",
-   Callback = function(Value)
-       _G.Auto = Value
-
-       spawn(function()
-           while _G.Auto do
-               local rootPart = game.Player.Character:FindFirstChild("HumanoidRootPart")
-               if rootPart then
-                   for i, v in pairs(game:GetService("Workspace").Hoops:GetChildren()) do
-                       rootPart.CFrame = v.CFrame
-                       wait(0.2)
-                   end
-               end
-               wait(0.5)
-           end
-       end)
-   end,
-})
-
-local IYButton = OtherTab:CreateButton({
+-- Infinite Yield
+OtherTab:CreateButton({
     Name = "Infinite Yield",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/edgeiy/infiniteyield/master/source", true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/edgey77/infiniteyield/master/source"))()
     end,
 })
 
-local DDButton = OtherTab:CreateButton({
-    Name = "Dark Dex (Mobile)",
+-- Blox Fruits (Redz Hub)
+GameTab:CreateButton({
+    Name = "Blox Fruits (Redz Hub)",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Hosvile/DEX-Explorer/main/main.lua", true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/newredz/BloxFruits/main/Source.luau"))()
     end,
 })
 
-local MPSLButton = OtherTab:CreateButton({
-    Name = "Prison Life (Prison Ware)",
+-- Tower of Hell
+GameTab:CreateButton({
+    Name = "Tower of Hell Script",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Denverrz/scripts/master/PRISONWARE_v1.3.txt", true))()
-    end,
-})
-
-local BFButton = GameTab:CreateButton({
-   Name = "Blox Fruit (redz hub)",
-   Callback = function()
-   
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/newredz/BloxFruits/refs/heads/main/Source.luau"))(Settings)
-end,
-})
-
-local TohButton = GameTab:CreateButton({
-   Name = "Tower of Hell",
-   Callback = function()
-   
-   if game.PlaceId == 1962086868 then
-
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
-
-local OrionWindow = OrionLib:MakeWindow({Name = "Tower of Hell", HidePremium = false, SaveConfig = true, ConfigFolder = "Delight"})
-
-local MainTab = OrionWindow:MakeTab({
-	Name = "Main",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
-
-MainTab:AddButton({
-  Name = "Anti Cheat Bypass",
-  Callback = function()
-  local playerscripts = game:GetService'Players'.LocalPlayer.PlayerScripts
-
-local script1 = playerscripts.LocalScript
-local script2 = playerscripts.LocalScript2
-
-local script1signal = script1.Changed
-local script2signal = script2.Changed
-
-for i, connection in next, getconnections(script1signal) do
-    connection:Disable()
-end
-for i, connection in next, getconnections(script2signal) do
-    connection:Disable()
-end
-
-script1:Destroy()
-script2:Destroy()
-end,
-})
-
-MainTab:AddButton({
-	Name = "Teleport to end",
-	Callback = function()
-		local part = workspace:FindFirstChild("Teleportend")
-		
-		-- Create the part if it doesn't exist
-		if not part then
-			part = Instance.new("Part")
-			part.Name = "Teleportend"
-			part.Parent = workspace
-			part.CanCollide = false
-			part.Anchored = true
-			part.Transparency = 1
-			part.CFrame = CFrame.new(
-				-30.4304543, 297.748871, 27.8156776,
-				0.647168756, -3.15087179e-10, -0.762346804,
-				4.84563811e-09, 1, 3.70022968e-09,
-				0.762346804, -6.08872952e-09, 0.647168756
-			)
-		end
-
-		-- Teleport the player
-		local char = game.Player.Character
-		if char and char:FindFirstChild("HumanoidRootPart") then
-			char.HumanoidRootPart.CFrame = part.CFrame
-		end
-	end,
-})
-
-MainTab:AddButton({
-	Name = "All gear",
-	Callback = function()
-      		local j = game.ReplicatedStorage.Assets.Gear.jump:Clone()
-local g = game.ReplicatedStorage.Assets.Gear.gravity:Clone()
-local h = game.ReplicatedStorage.Assets.Gear.hook:Clone()
-local ho = game.ReplicatedStorage.Assets.Gear.hourglass:Clone()
-local f = game.ReplicatedStorage.Assets.Gear.fusion:Clone()
-j.Parent = game.Players.LocalPlayer.Backpack
-f.Parent = game.Players.LocalPlayer.Backpack
-ho.Parent = game.Players.LocalPlayer.Backpack
-g.Parent = game.Players.LocalPlayer.Backpack
-h.Parent = game.Players.LocalPlayer.Backpack
-  	end,
-})
-
-MainTab:AddButton({
-	Name = "God mode",
-	Callback = function()
-local character = Player.Character
-
-function GodMode()
-    character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-        if character.Humanoid.Health < 100 then
-            character.Humanoid.Health = 100
+        if game.PlaceId == 1962086868 then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/jensonhirst/Orion/main/ToH.lua"))()
+        else
+            Rayfield:Notify({
+                Title = "Wrong Game",
+                Content = "Teleport to Tower of Hell to use this script.",
+                Duration = 5,
+            })
         end
-    end)
-end
-
-
-GodMode()
-end,
+    end,
 })
 
-else
-
-Rayfield:Notify({
-   Title = "Unsupported Game.",
-   Content = "This game is not the supported game to execute the script. You will be kicked after 5-6 seconds.",
-   Duration = 6.5,
-   Image = 4483362458,
-
+-- Auto Hoops
+GameTab:CreateToggle({
+    Name = "Legends of Speed Auto Hoops",
+    CurrentValue = false,
+    Flag = "AutoHoopsToggle1",
+    Callback = function(Value)
+        _G.Auto = Value
+        task.spawn(function()
+            while _G.Auto do
+                local rootPart = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+                if rootPart then
+                    for _, v in ipairs(workspace.Hoops:GetChildren()) do
+                        rootPart.CFrame = v.CFrame
+                        task.wait(0.2)
+                    end
+                end
+                task.wait(0.5)
+            end
+        end)
+    end,
 })
 
-task.wait(6.5)
-game.Players.LocalPlayer:Kick("Unsupported Game.")
-
-end
-
-   end,
+-- Teleport to Player
+PlayerTab:CreateInput({
+    Name = "Teleport to player",
+    CurrentValue = "",
+    PlaceholderText = "Put the player name to teleport",
+    RemoveTextAfterFocusLost = false,
+    Flag = "Input1",
+    Callback = function(Text)
+        local TargetPlayer = Players:FindFirstChild(Text)
+        if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local myRoot = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+            if myRoot then
+                myRoot.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
+            end
+        else
+            warn("Target player or their character not found.")
+        end
+    end,
 })
 
-local RailsButton = GameTab:CreateButton({
-   Name = "Dead Rails",
-   Callback = function()
-
-loadstring(game:HttpGet(('https://raw.githubusercontent.com/TwoGunVolley/Eeeee/refs/heads/main/RailsDated.txt')))()
-
-   end,
-})
-
-local Input = PlayerTab:CreateInput({
-   Name = "Teleport to player",
-   CurrentValue = "",
-   PlaceholderText = "Put the player name to teleport",
-   RemoveTextAfterFocusLost = false,
-   Flag = "Input1",
-   Callback = function(Text)
-       local TargetPlayer = game.Players:FindFirstChild(Text)
-
-       if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-           if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-               Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
-           end
-       else
-           warn("Target player or their character not found.")
-       end
-   end,
-})
-
--- WalkSpeed Slider: Adjusts the player's walk speed
+-- WalkSpeed
 PlayerTab:CreateSlider({
     Name = "WalkSpeed",
     Range = {16, 200},
@@ -312,34 +125,28 @@ PlayerTab:CreateSlider({
     Suffix = "Speed",
     CurrentValue = 16,
     Callback = function(Value)
-        local character = game.Player.Character
-        if character then
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid.WalkSpeed = Value
-            end
+        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = Value
         end
     end,
 })
 
--- JumpPower Slider: Adjusts the player's jump power
+-- JumpPower
 PlayerTab:CreateSlider({
     Name = "JumpPower",
     Range = {50, 200},
     Increment = 1,
     CurrentValue = 50,
     Callback = function(Value)
-        local character = game.Player.Character
-        if character then
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid.JumpPower = Value
-            end
+        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.JumpPower = Value
         end
     end,
 })
 
--- Infinite Jump Toggle: Lets you jump even while in mid-air
+-- Infinite Jump
 local infiniteJumpEnabled = false
 PlayerTab:CreateToggle({
     Name = "Infinite Jump",
@@ -348,66 +155,57 @@ PlayerTab:CreateToggle({
         infiniteJumpEnabled = Value
     end,
 })
--- Connect Infinite Jump to the jump event
-game:GetService("UserInputService").JumpRequest:Connect(function()
+
+UserInputService.JumpRequest:Connect(function()
     if infiniteJumpEnabled then
-        local character = game.Player.Character
-        if character then
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-            end
+        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
         end
     end
 end)
 
--- Noclip Toggle: Disables collisions for the player's character
+-- Noclip
 local noclipEnabled = false
 PlayerTab:CreateToggle({
     Name = "Noclip",
     CurrentValue = false,
     Callback = function(Value)
         noclipEnabled = Value
-        if noclipEnabled then
-            spawn(function()
-                while noclipEnabled and wait() do
-                    local character = game.Player.Character
-                    if character then
-                        for _, part in ipairs(character:GetDescendants()) do
-                            if part:IsA("BasePart") then
-                                part.CanCollide = false
-                            end
+        task.spawn(function()
+            while noclipEnabled do
+                local character = Player.Character
+                if character then
+                    for _, part in ipairs(character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.CanCollide = false
                         end
                     end
                 end
-            end)
-        end
+                task.wait()
+            end
+        end)
     end,
 })
 
--- ESP Feature
+-- ESP
 local espEnabled = false
 local espFolder = Instance.new("Folder", game.CoreGui)
 espFolder.Name = "ESP"
 
-game.Players.PlayerRemoving:Connect(removeHighlight)
--- Function to create ESP highlight for a player
 local function createHighlight(player)
-
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         if not espFolder:FindFirstChild(player.Name) then
             local highlight = Instance.new("Highlight")
             highlight.Name = player.Name
             highlight.Adornee = player.Character
-            highlight.FillColor = Color3.fromRGB(128, 0, 128) -- Purple color
-            highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- Optional: white outline
+            highlight.FillColor = Color3.fromRGB(128, 0, 128)
+            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
             highlight.FillTransparency = 0.5
             highlight.Parent = espFolder
         end
     end
 end
-
--- Function to remove ESP highlight when player leaves
 
 local function removeHighlight(player)
     local highlight = espFolder:FindFirstChild(player.Name)
@@ -416,38 +214,33 @@ local function removeHighlight(player)
     end
 end
 
--- Constantly update ESP highlights
-task.spawn(function()
-    while true do
+Players.PlayerRemoving:Connect(removeHighlight)
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
         if espEnabled then
-            for _, player in ipairs(game.Players:GetPlayers()) do
-                if player ~= game.Players.LocalPlayer then
-                    createHighlight(player)
-                end
-            end
-        else
-            -- If disabled, remove all highlights
-            for _, v in ipairs(espFolder:GetChildren()) do
-                v:Destroy()
-            end
-        end
-        task.wait(1) -- Update every 1 second
-    end
-end)
-
--- Listen for new players joining
-game.Players.PlayerAdded:Connect(function(player)
-   
-
- player.CharacterAdded:Connect(function()
-        if espEnabled then
-            task.wait(1) -- wait a bit for character to load
+            task.wait(1)
             createHighlight(player)
         end
     end)
 end)
 
--- ESP Toggle in PlayerTab
+task.spawn(function()
+    while true do
+        if espEnabled then
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= Player then
+                    createHighlight(player)
+                end
+            end
+        else
+            for _, obj in ipairs(espFolder:GetChildren()) do
+                obj:Destroy()
+            end
+        end
+        task.wait(1)
+    end
+end)
+
 PlayerTab:CreateToggle({
     Name = "Player ESP (Purple)",
     CurrentValue = false,
