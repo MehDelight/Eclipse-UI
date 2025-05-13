@@ -6,7 +6,8 @@ local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 local AimbotEnabled = false
 local AimbotFOV = 100
-
+local HttpService = game:GetService("HttpService")
+local SoundService = game:GetService("SoundService")
 
 -- Load Rayfield UI Library
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -33,6 +34,37 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
+local versionUrl = "https://raw.githubusercontent.com/MehDelight/Eclipse-UI/refs/heads/main/Version"
+
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://9118828711"
+sound.Volume = 1
+sound.Parent = SoundService
+
+task.spawn(function()
+    local success, result = pcall(function()
+        return HttpService:GetAsync(versionUrl)
+    end)
+
+    if success and result then
+        sound:Play()
+        Rayfield:Notify({
+            Title = "Script Hub Loaded",
+            Content = "Current Version: " .. result,
+            Duration = 6,
+            Image = 4483362458,
+        })
+    else
+        sound:Play()
+        Rayfield:Notify({
+            Title = "Script Hub Loaded",
+            Content = "Version: Unknown (Failed to load)",
+            Duration = 6,
+            Image = 4483362458,
+        })
+    end
+end)
+
 -- Tabs
 local PlayerTab = Window:CreateTab("Player", 4483362458)
 local GameTab = Window:CreateTab("Games", 4483362458)
@@ -45,14 +77,6 @@ SettingsTab:CreateKeybind({
     CurrentKeybind = "Q",
     Callback = function()
         Rayfield:Destroy()
-    end,
-})
-
-PlayerTab:CreateToggle({
-    Name = "Aimbot",
-    CurrentValue = false,
-    Callback = function(Value)
-        AimbotEnabled = Value
     end,
 })
 
@@ -247,26 +271,6 @@ GameTab:CreateToggle({
     end,
 })
 
--- Teleport to Player
-PlayerTab:CreateInput({
-    Name = "Teleport to player",
-    CurrentValue = "",
-    PlaceholderText = "Put the player name to teleport",
-    RemoveTextAfterFocusLost = false,
-    Flag = "Input1",
-    Callback = function(Text)
-        local TargetPlayer = Players:FindFirstChild(Text)
-        if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            local myRoot = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-            if myRoot then
-                myRoot.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
-            end
-        else
-            warn("Target player or their character not found.")
-        end
-    end,
-})
-
 -- WalkSpeed
 PlayerTab:CreateSlider({
     Name = "WalkSpeed",
@@ -293,6 +297,34 @@ PlayerTab:CreateSlider({
         if humanoid then
             humanoid.JumpPower = Value
         end
+    end,
+})
+
+-- Teleport to Player
+PlayerTab:CreateInput({
+    Name = "Teleport to player",
+    CurrentValue = "",
+    PlaceholderText = "Put the player name to teleport",
+    RemoveTextAfterFocusLost = false,
+    Flag = "Input1",
+    Callback = function(Text)
+        local TargetPlayer = Players:FindFirstChild(Text)
+        if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local myRoot = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+            if myRoot then
+                myRoot.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
+            end
+        else
+            warn("Target player or their character not found.")
+        end
+    end,
+})
+
+PlayerTab:CreateToggle({
+    Name = "Aimbot",
+    CurrentValue = false,
+    Callback = function(Value)
+        AimbotEnabled = Value
     end,
 })
 
