@@ -37,7 +37,7 @@ local Window = Rayfield:CreateWindow({
 local versionUrl = "https://raw.githubusercontent.com/MehDelight/Eclipse-UI/refs/heads/main/Version"
 
 local sound = Instance.new("Sound")
-sound.SoundId = "rbxassetid://9118828711"
+sound.SoundId = "rbxassetid://7034178313"
 sound.Volume = 1
 sound.Parent = SoundService
 
