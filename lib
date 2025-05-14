@@ -1,200 +1,79 @@
--- lib.lua (upload to GitHub and access via loadstring)
-local Library = {}
-
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
+-- Required services
 local TweenService = game:GetService("TweenService")
-local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
+local Player = game.Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 
--- Folder for saving
-local folder = "MatexHub"
-if not isfolder(folder) then makefolder(folder) end
-local function SaveSettings(tab, data)
-    writefile(folder.."/"..tab..".json", HttpService:JSONEncode(data))
-end
-local function LoadSettings(tab)
-    local path = folder.."/"..tab..".json"
-    if isfile(path) then return HttpService:JSONDecode(readfile(path)) else return {} end
-end
+-- Create UI
+local MatexUI = Instance.new("ScreenGui")
+MatexUI.Name = "MatexUI"
+MatexUI.Parent = PlayerGui
+MatexUI.ResetOnSpawn = false
+MatexUI.IgnoreGuiInset = true
 
-function Library:CreateWindow(title)
-    -- ScreenGui & Main Frame
-    local gui = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
-    gui.Name = "MatexUI"
-    gui.IgnoreGuiInset = true
-    gui.ResetOnSpawn = false
+-- Frame
+local MatexFrame = Instance.new("Frame")
+MatexFrame.Size = UDim2.new(0, 450, 0, 250)
+MatexFrame.Position = UDim2.new(0, 180, 0, 1000)  -- Start at the bottom of the screen
+MatexFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MatexFrame.Parent = MatexUI
+MatexFrame.Active = true
+MatexFrame.Visible = false  -- Initially hidden
 
-    local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 450, 0, 250)
-    frame.Position = UDim2.new(0.5, -225, 1, 0)
-    frame.AnchorPoint = Vector2.new(0.5, 0)
-    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    frame.Parent = gui
-    frame.Active = true
+-- Tween setup for showing the frame
+local goalVisible = UDim2.new(0, 180, 0, 180)  -- Position to center
+local goalInvisible = UDim2.new(0, 180, 0, 1000)  -- Position to bottom (invisible)
 
-    -- Tween in
-    TweenService:Create(frame, TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        Position = UDim2.new(0.5, -225, 0, 0)
-    }):Play()
+local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)  -- 1 second smooth animation
 
-    -- Drag support
-    local dragging, dragStart, startPos
-    local function update(input)
-        local delta = input.Position - dragStart
-        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+-- Tween for showing the frame
+local tweenShow = TweenService:Create(MatexFrame, tweenInfo, {Position = goalVisible})
+
+-- Tween for hiding the frame
+local tweenHide = TweenService:Create(MatexFrame, tweenInfo, {Position = goalInvisible})
+
+-- Button to toggle visibility
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Size = UDim2.new(0, 100, 0, 40)
+ToggleButton.Position = UDim2.new(0, 20, 0, 20)  -- Positioning outside of the frame
+ToggleButton.Text = "Toggle Frame"
+ToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.Font = Enum.Font.Gotham
+ToggleButton.TextSize = 14
+ToggleButton.Parent = MatexUI
+
+-- Toggle frame visibility when button is clicked
+ToggleButton.MouseButton1Click:Connect(function()
+    if MatexFrame.Visible then
+        tweenHide:Play()  -- Play the animation to hide
+        MatexFrame.Visible = false  -- Set frame to invisible after animation
+    else
+        MatexFrame.Visible = true  -- Set frame to visible before starting animation
+        tweenShow:Play()  -- Play the animation to show
     end
-    frame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = frame.Position
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then dragging = false end
-            end)
-        end
-    end)
-    frame.InputChanged:Connect(function(input)
-        if dragging then update(input) end
-    end)
+end)
 
-    -- Title bar
-    local bar = Instance.new("TextLabel")
-    bar.Size = UDim2.new(1, 0, 0, 30)
-    bar.Text = title
-    bar.TextColor3 = Color3.new(1, 1, 1)
-    bar.Font = Enum.Font.GothamBold
-    bar.TextSize = 16
-    bar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    bar.Parent = frame
+-- Add a title to the frame
+local TitleBar = Instance.new("TextLabel")
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.Text = "Matex Hub"
+TitleBar.TextColor3 = Color3.new(1, 1, 1)
+TitleBar.Font = Enum.Font.GothamBold
+TitleBar.TextSize = 16
+TitleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+TitleBar.Parent = MatexFrame
 
-    -- Tab list
-    local tabList = Instance.new("ScrollingFrame")
-    tabList.Size = UDim2.new(0, 120, 1, -30)
-    tabList.Position = UDim2.new(0, 0, 0, 30)
-    tabList.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    tabList.CanvasSize = UDim2.new(0, 0, 5, 0)
-    tabList.ScrollBarThickness = 4
-    tabList.Parent = frame
+-- Add a simple button inside the frame
+local TestButton = Instance.new("TextButton")
+TestButton.Size = UDim2.new(1, -20, 0, 30)
+TestButton.Position = UDim2.new(0, 10, 0, 40)
+TestButton.Text = "Test Button"
+TestButton.TextColor3 = Color3.new(1, 1, 1)
+TestButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+TestButton.Font = Enum.Font.Gotham
+TestButton.TextSize = 14
+TestButton.Parent = MatexFrame
 
-    -- Content area
-    local content = Instance.new("Frame")
-    content.Size = UDim2.new(1, -130, 1, -30)
-    content.Position = UDim2.new(0, 130, 0, 30)
-    content.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    content.Parent = frame
-
-    -- Notification
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Welcome!",
-        Text = "Welcome back, " .. Player.DisplayName,
-        Duration = 5
-    })
-
-    local Window = {}
-    function Window:CreateTab(name)
-        local tabButton = Instance.new("TextButton")
-        tabButton.Size = UDim2.new(1, -10, 0, 40)
-        tabButton.Position = UDim2.new(0, 5, 0, #tabList:GetChildren() * 45)
-        tabButton.Text = name
-        tabButton.Font = Enum.Font.Gotham
-        tabButton.TextSize = 14
-        tabButton.TextColor3 = Color3.new(1, 1, 1)
-        tabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        tabButton.Parent = tabList
-
-        local tabFrame = Instance.new("Frame")
-        tabFrame.Size = UDim2.new(1, 0, 1, 0)
-        tabFrame.Visible = false
-        tabFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-        tabFrame.Parent = content
-
-        tabButton.MouseButton1Click:Connect(function()
-            for _, v in pairs(content:GetChildren()) do v.Visible = false end
-            tabFrame.Visible = true
-        end)
-
-        local elements = {}
-        function elements:CreateButton(text, callback)
-            local btn = Instance.new("TextButton")
-            btn.Size = UDim2.new(1, -20, 0, 30)
-            btn.Position = UDim2.new(0, 10, 0, #tabFrame:GetChildren() * 35)
-            btn.Text = text
-            btn.Font = Enum.Font.Gotham
-            btn.TextSize = 14
-            btn.TextColor3 = Color3.new(1, 1, 1)
-            btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-            btn.Parent = tabFrame
-            btn.MouseButton1Click:Connect(callback)
-        end
-
-        function elements:CreateToggle(text, key, callback)
-            local data = LoadSettings(name)
-            local state = data[key] or false
-            local toggle = Instance.new("TextButton")
-            toggle.Size = UDim2.new(1, -20, 0, 30)
-            toggle.Position = UDim2.new(0, 10, 0, #tabFrame:GetChildren() * 35)
-            toggle.Text = (state and "[ ON ] " or "[ OFF ] ") .. text
-            toggle.Font = Enum.Font.Gotham
-            toggle.TextSize = 14
-            toggle.TextColor3 = Color3.new(1, 1, 1)
-            toggle.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-            toggle.Parent = tabFrame
-            callback(state)
-            toggle.MouseButton1Click:Connect(function()
-                state = not state
-                toggle.Text = (state and "[ ON ] " or "[ OFF ] ") .. text
-                data[key] = state
-                SaveSettings(name, data)
-                callback(state)
-            end)
-        end
-
-        function elements:CreateDropdown(text, options, key, callback)
-            local data = LoadSettings(name)
-            local current = data[key] or options[1]
-            local dropdown = Instance.new("TextButton")
-            dropdown.Size = UDim2.new(1, -20, 0, 30)
-            dropdown.Position = UDim2.new(0, 10, 0, #tabFrame:GetChildren() * 35)
-            dropdown.Text = text .. ": " .. current
-            dropdown.Font = Enum.Font.Gotham
-            dropdown.TextSize = 14
-            dropdown.TextColor3 = Color3.new(1, 1, 1)
-            dropdown.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-            dropdown.Parent = tabFrame
-            callback(current)
-
-            dropdown.MouseButton1Click:Connect(function()
-                for _, opt in ipairs(options) do
-                    local optBtn = Instance.new("TextButton")
-                    optBtn.Size = UDim2.new(1, -40, 0, 25)
-                    optBtn.Position = UDim2.new(0, 20, 0, #tabFrame:GetChildren() * 30)
-                    optBtn.Text = opt
-                    optBtn.TextColor3 = Color3.new(1, 1, 1)
-                    optBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                    optBtn.Font = Enum.Font.Gotham
-                    optBtn.TextSize = 12
-                    optBtn.Parent = tabFrame
-                    optBtn.MouseButton1Click:Connect(function()
-                        current = opt
-                        dropdown.Text = text .. ": " .. current
-                        data[key] = current
-                        SaveSettings(name, data)
-                        callback(current)
-                        for _, child in ipairs(tabFrame:GetChildren()) do
-                            if child ~= dropdown and child:IsA("TextButton") and not table.find(options, child.Text) then
-                                child:Destroy()
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
-
-        return elements
-    end
-
-    return Window
-end
-
-return Library
+TestButton.MouseButton1Click:Connect(function()
+    print("Test Button clicked")
+end)
