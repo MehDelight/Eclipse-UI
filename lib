@@ -1,84 +1,197 @@
--- Required services
-local TweenService = game:GetService("TweenService")
-local Player = game.Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
+-- Matex UI Library (Full Feature Set) local TweenService = game:GetService("TweenService") local UserInputService = game:GetService("UserInputService") local Players = game:GetService("Players") local Player = Players.LocalPlayer local PlayerGui = Player:WaitForChild("PlayerGui")
 
--- UI Library
-local UI_Library = {}
+local UI_Library = {} local UIScreen = Instance.new("ScreenGui") UIScreen.Name = "MatexUI" UIScreen.Parent = PlayerGui UIScreen.ResetOnSpawn = false UIScreen.IgnoreGuiInset = true
 
--- CreateWindow method (to create windows)
-function UI_Library:CreateWindow(windowTitle)
-    -- Create UI container
-    local Window = Instance.new("Frame")
-    Window.Size = UDim2.new(0, 450, 0, 250)
-    Window.Position = UDim2.new(0, 180, 0, 1000)
-    Window.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Window.Active = true
-    Window.Visible = false
-    Window.Parent = PlayerGui:FindFirstChild("MatexUI") or PlayerGui
+-- Utility function to create basic UI elements local function Create(class, props) local inst = Instance.new(class) for i, v in pairs(props) do inst[i] = v end return inst end
 
-    -- Tween setup
-    local goalVisible = UDim2.new(0, 180, 0, 180)
-    local goalInvisible = UDim2.new(0, 180, 0, 1000)
-    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local tweenShow = TweenService:Create(Window, tweenInfo, {Position = goalVisible})
-    local tweenHide = TweenService:Create(Window, tweenInfo, {Position = goalInvisible})
+-- Tween function local function Tween(obj, prop, duration) local tween = TweenService:Create(obj, TweenInfo.new(duration or 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), prop) tween:Play() return tween end
 
-    -- Title
-    local TitleBar = Instance.new("TextLabel")
-    TitleBar.Size = UDim2.new(1, 0, 0, 30)
-    TitleBar.Text = windowTitle or "Untitled Window"
-    TitleBar.TextColor3 = Color3.new(1, 1, 1)
-    TitleBar.Font = Enum.Font.GothamBold
-    TitleBar.TextSize = 16
-    TitleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TitleBar.Parent = Window
+-- Draggable function local function MakeDraggable(frame) local dragToggle, dragInput, dragStart, startPos
 
-    -- Button inside window
-    local TestButton = Instance.new("TextButton")
-    TestButton.Size = UDim2.new(1, -20, 0, 30)
-    TestButton.Position = UDim2.new(0, 10, 0, 40)
-    TestButton.Text = "Test Button"
-    TestButton.TextColor3 = Color3.new(1, 1, 1)
-    TestButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-    TestButton.Font = Enum.Font.Gotham
-    TestButton.TextSize = 14
-    TestButton.Parent = Window
-    TestButton.MouseButton1Click:Connect(function()
-        print("Test Button clicked")
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragToggle = true
+        dragStart = input.Position
+        startPos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragToggle = false
+            end
+        end)
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragToggle then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+end
+
+function UI_Library:CreateWindow(name) local window = Create("Frame", { Name = name, Size = UDim2.new(0, 550, 0, 400), Position = UDim2.new(0.5, -275, 1, 0), BackgroundColor3 = Color3.fromRGB(25, 25, 25), BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Parent = UIScreen })
+
+MakeDraggable(window)
+
+local tabList = Create("ScrollingFrame", {
+    Name = "TabList",
+    Size = UDim2.new(0, 120, 1, 0),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
+    ScrollBarThickness = 2,
+    BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+    BorderSizePixel = 0,
+    Parent = window
+})
+
+local pages = Create("Frame", {
+    Name = "Pages",
+    Position = UDim2.new(0, 120, 0, 0),
+    Size = UDim2.new(1, -120, 1, 0),
+    BackgroundColor3 = Color3.fromRGB(35, 35, 35),
+    BorderSizePixel = 0,
+    Parent = window
+})
+
+local layout = Instance.new("UIListLayout", tabList)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local tabs = {}
+
+function tabs:CreateTab(tabName)
+    local tabBtn = Create("TextButton", {
+        Text = tabName,
+        Size = UDim2.new(1, 0, 0, 30),
+        BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+        TextColor3 = Color3.new(1, 1, 1),
+        Font = Enum.Font.Gotham,
+        TextSize = 14,
+        Parent = tabList
+    })
+
+    local page = Create("ScrollingFrame", {
+        Name = tabName .. "_Page",
+        Size = UDim2.new(1, 0, 1, 0),
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        ScrollBarThickness = 4,
+        BackgroundTransparency = 1,
+        Visible = false,
+        Parent = pages
+    })
+
+    local pageLayout = Instance.new("UIListLayout", page)
+    pageLayout.Padding = UDim.new(0, 6)
+    pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+    tabBtn.MouseButton1Click:Connect(function()
+        for _, v in pairs(pages:GetChildren()) do
+            if v:IsA("ScrollingFrame") then v.Visible = false end
+        end
+        page.Visible = true
     end)
 
-    -- Toggle button outside
-    local ToggleButton = Instance.new("TextButton")
-    ToggleButton.Size = UDim2.new(0, 100, 0, 40)
-    ToggleButton.Position = UDim2.new(0, 20, 0, 20)
-    ToggleButton.Text = "Toggle Window"
-    ToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleButton.Font = Enum.Font.Gotham
-    ToggleButton.TextSize = 14
-    ToggleButton.Parent = PlayerGui:FindFirstChild("MatexUI") or PlayerGui
-    ToggleButton.MouseButton1Click:Connect(function()
-        if Window.Visible then
-            tweenHide:Play()
-            Window.Visible = false
-        else
-            Window.Visible = true
-            tweenShow:Play()
-        end
-    end)
+    local tabFunctions = {}
 
-    return {
-        Window = Window,
-        Show = function()
-            Window.Visible = true
-            tweenShow:Play()
-        end,
-        Hide = function()
-            tweenHide:Play()
-            Window.Visible = false
-        end
-    }
+    function tabFunctions:CreateSection(title)
+        local section = Create("Frame", {
+            Size = UDim2.new(1, -10, 0, 30),
+            BackgroundColor3 = Color3.fromRGB(45, 45, 45),
+            BorderSizePixel = 0,
+            Parent = page
+        })
+
+        local label = Create("TextLabel", {
+            Text = title,
+            Size = UDim2.new(1, 0, 1, 0),
+            TextColor3 = Color3.new(1, 1, 1),
+            Font = Enum.Font.GothamBold,
+            TextSize = 14,
+            BackgroundTransparency = 1,
+            Parent = section
+        })
+        return section
+    end
+
+    function tabFunctions:CreateButton(text, callback)
+        local btn = Create("TextButton", {
+            Text = text,
+            Size = UDim2.new(1, -10, 0, 30),
+            BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+            TextColor3 = Color3.new(1, 1, 1),
+            Font = Enum.Font.Gotham,
+            TextSize = 14,
+            Parent = page
+        })
+        btn.MouseButton1Click:Connect(callback)
+    end
+
+    function tabFunctions:CreateToggle(text, default, callback)
+        local toggle = false
+        local btn = Create("TextButton", {
+            Text = text .. ": OFF",
+            Size = UDim2.new(1, -10, 0, 30),
+            BackgroundColor3 = Color3.fromRGB(70, 70, 70),
+            TextColor3 = Color3.new(1, 1, 1),
+            Font = Enum.Font.Gotham,
+            TextSize = 14,
+            Parent = page
+        })
+        toggle = default
+        btn.Text = text .. (toggle and ": ON" or ": OFF")
+
+        btn.MouseButton1Click:Connect(function()
+            toggle = not toggle
+            btn.Text = text .. (toggle and ": ON" or ": OFF")
+            if callback then callback(toggle) end
+        end)
+    end
+
+    function tabFunctions:CreateDropdown(title, options, callback)
+        local dropdown = Create("TextButton", {
+            Text = title,
+            Size = UDim2.new(1, -10, 0, 30),
+            BackgroundColor3 = Color3.fromRGB(80, 80, 80),
+            TextColor3 = Color3.new(1, 1, 1),
+            Font = Enum.Font.Gotham,
+            TextSize = 14,
+            Parent = page
+        })
+
+        dropdown.MouseButton1Click:Connect(function()
+            for _, v in pairs(options) do
+                callback(v)
+            end
+        end)
+    end
+
+    function tabFunctions:CreateSlider(text, min, max, callback)
+        -- Placeholder; add real slider code if needed
+        tabFunctions:CreateButton(text .. " (Slider Not Implemented)", function() callback((min + max) / 2) end)
+    end
+
+    function tabFunctions:CreateKeybind(text, defaultKey, callback)
+        local btn = tabFunctions:CreateButton("Keybind: " .. text .. " [" .. defaultKey.Name .. "]", function() end)
+        UserInputService.InputBegan:Connect(function(input)
+            if input.KeyCode == defaultKey then
+                callback()
+            end
+        end)
+    end
+
+    return tabFunctions
+end
+
+Tween(window, {Position = UDim2.new(0.5, -275, 0.5, 0)}, 0.6)
+return tabs
+
 end
 
 return UI_Library
+
