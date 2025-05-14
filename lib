@@ -3,77 +3,82 @@ local TweenService = game:GetService("TweenService")
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
--- Create UI
-local MatexUI = Instance.new("ScreenGui")
-MatexUI.Name = "MatexUI"
-MatexUI.Parent = PlayerGui
-MatexUI.ResetOnSpawn = false
-MatexUI.IgnoreGuiInset = true
+-- UI Library
+local UI_Library = {}
 
--- Frame
-local MatexFrame = Instance.new("Frame")
-MatexFrame.Size = UDim2.new(0, 450, 0, 250)
-MatexFrame.Position = UDim2.new(0, 180, 0, 1000)  -- Start at the bottom of the screen
-MatexFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MatexFrame.Parent = MatexUI
-MatexFrame.Active = true
-MatexFrame.Visible = false  -- Initially hidden
+-- CreateWindow method (to create windows)
+function UI_Library:CreateWindow(windowTitle)
+    -- Create UI container
+    local Window = Instance.new("Frame")
+    Window.Size = UDim2.new(0, 450, 0, 250)
+    Window.Position = UDim2.new(0, 180, 0, 1000)
+    Window.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Window.Active = true
+    Window.Visible = false
+    Window.Parent = PlayerGui:FindFirstChild("MatexUI") or PlayerGui
 
--- Tween setup for showing the frame
-local goalVisible = UDim2.new(0, 180, 0, 180)  -- Position to center
-local goalInvisible = UDim2.new(0, 180, 0, 1000)  -- Position to bottom (invisible)
+    -- Tween setup
+    local goalVisible = UDim2.new(0, 180, 0, 180)
+    local goalInvisible = UDim2.new(0, 180, 0, 1000)
+    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tweenShow = TweenService:Create(Window, tweenInfo, {Position = goalVisible})
+    local tweenHide = TweenService:Create(Window, tweenInfo, {Position = goalInvisible})
 
-local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)  -- 1 second smooth animation
+    -- Title
+    local TitleBar = Instance.new("TextLabel")
+    TitleBar.Size = UDim2.new(1, 0, 0, 30)
+    TitleBar.Text = windowTitle or "Untitled Window"
+    TitleBar.TextColor3 = Color3.new(1, 1, 1)
+    TitleBar.Font = Enum.Font.GothamBold
+    TitleBar.TextSize = 16
+    TitleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    TitleBar.Parent = Window
 
--- Tween for showing the frame
-local tweenShow = TweenService:Create(MatexFrame, tweenInfo, {Position = goalVisible})
+    -- Button inside window
+    local TestButton = Instance.new("TextButton")
+    TestButton.Size = UDim2.new(1, -20, 0, 30)
+    TestButton.Position = UDim2.new(0, 10, 0, 40)
+    TestButton.Text = "Test Button"
+    TestButton.TextColor3 = Color3.new(1, 1, 1)
+    TestButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    TestButton.Font = Enum.Font.Gotham
+    TestButton.TextSize = 14
+    TestButton.Parent = Window
+    TestButton.MouseButton1Click:Connect(function()
+        print("Test Button clicked")
+    end)
 
--- Tween for hiding the frame
-local tweenHide = TweenService:Create(MatexFrame, tweenInfo, {Position = goalInvisible})
+    -- Toggle button outside
+    local ToggleButton = Instance.new("TextButton")
+    ToggleButton.Size = UDim2.new(0, 100, 0, 40)
+    ToggleButton.Position = UDim2.new(0, 20, 0, 20)
+    ToggleButton.Text = "Toggle Window"
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleButton.Font = Enum.Font.Gotham
+    ToggleButton.TextSize = 14
+    ToggleButton.Parent = PlayerGui:FindFirstChild("MatexUI") or PlayerGui
+    ToggleButton.MouseButton1Click:Connect(function()
+        if Window.Visible then
+            tweenHide:Play()
+            Window.Visible = false
+        else
+            Window.Visible = true
+            tweenShow:Play()
+        end
+    end)
 
--- Button to toggle visibility
-local ToggleButton = Instance.new("TextButton")
-ToggleButton.Size = UDim2.new(0, 100, 0, 40)
-ToggleButton.Position = UDim2.new(0, 20, 0, 20)  -- Positioning outside of the frame
-ToggleButton.Text = "Toggle Frame"
-ToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleButton.Font = Enum.Font.Gotham
-ToggleButton.TextSize = 14
-ToggleButton.Parent = MatexUI
+    return {
+        Window = Window,
+        Show = function()
+            Window.Visible = true
+            tweenShow:Play()
+        end,
+        Hide = function()
+            tweenHide:Play()
+            Window.Visible = false
+        end
+    }
+end
 
--- Toggle frame visibility when button is clicked
-ToggleButton.MouseButton1Click:Connect(function()
-    if MatexFrame.Visible then
-        tweenHide:Play()  -- Play the animation to hide
-        MatexFrame.Visible = false  -- Set frame to invisible after animation
-    else
-        MatexFrame.Visible = true  -- Set frame to visible before starting animation
-        tweenShow:Play()  -- Play the animation to show
-    end
-end)
-
--- Add a title to the frame
-local TitleBar = Instance.new("TextLabel")
-TitleBar.Size = UDim2.new(1, 0, 0, 30)
-TitleBar.Text = "Matex Hub"
-TitleBar.TextColor3 = Color3.new(1, 1, 1)
-TitleBar.Font = Enum.Font.GothamBold
-TitleBar.TextSize = 16
-TitleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-TitleBar.Parent = MatexFrame
-
--- Add a simple button inside the frame
-local TestButton = Instance.new("TextButton")
-TestButton.Size = UDim2.new(1, -20, 0, 30)
-TestButton.Position = UDim2.new(0, 10, 0, 40)
-TestButton.Text = "Test Button"
-TestButton.TextColor3 = Color3.new(1, 1, 1)
-TestButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-TestButton.Font = Enum.Font.Gotham
-TestButton.TextSize = 14
-TestButton.Parent = MatexFrame
-
-TestButton.MouseButton1Click:Connect(function()
-    print("Test Button clicked")
-end)
+return UI_Library
