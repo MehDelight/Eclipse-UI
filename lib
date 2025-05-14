@@ -1,162 +1,200 @@
--- Services
-local UserInputService = game:GetService("UserInputService")
+-- lib.lua (upload to GitHub and access via loadstring)
+local Library = {}
+
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local Player = game.Players.LocalPlayer
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
 
--- UI Setup
-local MatexUI = Instance.new("ScreenGui")
-MatexUI.Name = "MatexUI"
-MatexUI.Parent = Player:WaitForChild("PlayerGui")
-MatexUI.ResetOnSpawn = false
-MatexUI.IgnoreGuiInset = true
-
--- Toggle Button
-local ToggleBtn = Instance.new("TextButton")
-ToggleBtn.Size = UDim2.new(0, 120, 0, 40)
-ToggleBtn.Position = UDim2.new(0, 20, 1, -60)
-ToggleBtn.AnchorPoint = Vector2.new(0, 1)
-ToggleBtn.Text = "Show / Hide"
-ToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-ToggleBtn.TextColor3 = Color3.new(1, 1, 1)
-ToggleBtn.Font = Enum.Font.Gotham
-ToggleBtn.TextSize = 16
-ToggleBtn.Parent = MatexUI
-
--- Main Frame
-local MatexFrame = Instance.new("Frame")
-MatexFrame.Size = UDim2.new(0, 350, 0, 250)
-MatexFrame.Position = UDim2.new(0, 180, 1, 0)
-MatexFrame.AnchorPoint = Vector2.new(0.5, 0)
-MatexFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MatexFrame.Active = true
-MatexFrame.Parent = MatexUI
-
--- Tween In from Bottom
-local tween = TweenService:Create(MatexFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-	Position = UDim2.new(0, 180, 0, 0)
-})
-tween:Play()
-
--- Draggable (Mobile + PC)
-local dragging, dragStart, startPos
-local function updateDrag(input)
-	local delta = input.Position - dragStart
-	MatexFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+-- Folder for saving
+local folder = "MatexHub"
+if not isfolder(folder) then makefolder(folder) end
+local function SaveSettings(tab, data)
+    writefile(folder.."/"..tab..".json", HttpService:JSONEncode(data))
+end
+local function LoadSettings(tab)
+    local path = folder.."/"..tab..".json"
+    if isfile(path) then return HttpService:JSONDecode(readfile(path)) else return {} end
 end
 
-local function beginDrag(input)
-	dragging = true
-	dragStart = input.Position
-	startPos = MatexFrame.Position
+function Library:CreateWindow(title)
+    -- ScreenGui & Main Frame
+    local gui = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
+    gui.Name = "MatexUI"
+    gui.IgnoreGuiInset = true
+    gui.ResetOnSpawn = false
 
-	input.Changed:Connect(function()
-		if input.UserInputState == Enum.UserInputState.End then
-			dragging = false
-		end
-	end)
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 450, 0, 250)
+    frame.Position = UDim2.new(0.5, -225, 1, 0)
+    frame.AnchorPoint = Vector2.new(0.5, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    frame.Parent = gui
+    frame.Active = true
+
+    -- Tween in
+    TweenService:Create(frame, TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Position = UDim2.new(0.5, -225, 0, 0)
+    }):Play()
+
+    -- Drag support
+    local dragging, dragStart, startPos
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
+        end
+    end)
+    frame.InputChanged:Connect(function(input)
+        if dragging then update(input) end
+    end)
+
+    -- Title bar
+    local bar = Instance.new("TextLabel")
+    bar.Size = UDim2.new(1, 0, 0, 30)
+    bar.Text = title
+    bar.TextColor3 = Color3.new(1, 1, 1)
+    bar.Font = Enum.Font.GothamBold
+    bar.TextSize = 16
+    bar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    bar.Parent = frame
+
+    -- Tab list
+    local tabList = Instance.new("ScrollingFrame")
+    tabList.Size = UDim2.new(0, 120, 1, -30)
+    tabList.Position = UDim2.new(0, 0, 0, 30)
+    tabList.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    tabList.CanvasSize = UDim2.new(0, 0, 5, 0)
+    tabList.ScrollBarThickness = 4
+    tabList.Parent = frame
+
+    -- Content area
+    local content = Instance.new("Frame")
+    content.Size = UDim2.new(1, -130, 1, -30)
+    content.Position = UDim2.new(0, 130, 0, 30)
+    content.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    content.Parent = frame
+
+    -- Notification
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Welcome!",
+        Text = "Welcome back, " .. Player.DisplayName,
+        Duration = 5
+    })
+
+    local Window = {}
+    function Window:CreateTab(name)
+        local tabButton = Instance.new("TextButton")
+        tabButton.Size = UDim2.new(1, -10, 0, 40)
+        tabButton.Position = UDim2.new(0, 5, 0, #tabList:GetChildren() * 45)
+        tabButton.Text = name
+        tabButton.Font = Enum.Font.Gotham
+        tabButton.TextSize = 14
+        tabButton.TextColor3 = Color3.new(1, 1, 1)
+        tabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        tabButton.Parent = tabList
+
+        local tabFrame = Instance.new("Frame")
+        tabFrame.Size = UDim2.new(1, 0, 1, 0)
+        tabFrame.Visible = false
+        tabFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        tabFrame.Parent = content
+
+        tabButton.MouseButton1Click:Connect(function()
+            for _, v in pairs(content:GetChildren()) do v.Visible = false end
+            tabFrame.Visible = true
+        end)
+
+        local elements = {}
+        function elements:CreateButton(text, callback)
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1, -20, 0, 30)
+            btn.Position = UDim2.new(0, 10, 0, #tabFrame:GetChildren() * 35)
+            btn.Text = text
+            btn.Font = Enum.Font.Gotham
+            btn.TextSize = 14
+            btn.TextColor3 = Color3.new(1, 1, 1)
+            btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            btn.Parent = tabFrame
+            btn.MouseButton1Click:Connect(callback)
+        end
+
+        function elements:CreateToggle(text, key, callback)
+            local data = LoadSettings(name)
+            local state = data[key] or false
+            local toggle = Instance.new("TextButton")
+            toggle.Size = UDim2.new(1, -20, 0, 30)
+            toggle.Position = UDim2.new(0, 10, 0, #tabFrame:GetChildren() * 35)
+            toggle.Text = (state and "[ ON ] " or "[ OFF ] ") .. text
+            toggle.Font = Enum.Font.Gotham
+            toggle.TextSize = 14
+            toggle.TextColor3 = Color3.new(1, 1, 1)
+            toggle.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            toggle.Parent = tabFrame
+            callback(state)
+            toggle.MouseButton1Click:Connect(function()
+                state = not state
+                toggle.Text = (state and "[ ON ] " or "[ OFF ] ") .. text
+                data[key] = state
+                SaveSettings(name, data)
+                callback(state)
+            end)
+        end
+
+        function elements:CreateDropdown(text, options, key, callback)
+            local data = LoadSettings(name)
+            local current = data[key] or options[1]
+            local dropdown = Instance.new("TextButton")
+            dropdown.Size = UDim2.new(1, -20, 0, 30)
+            dropdown.Position = UDim2.new(0, 10, 0, #tabFrame:GetChildren() * 35)
+            dropdown.Text = text .. ": " .. current
+            dropdown.Font = Enum.Font.Gotham
+            dropdown.TextSize = 14
+            dropdown.TextColor3 = Color3.new(1, 1, 1)
+            dropdown.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            dropdown.Parent = tabFrame
+            callback(current)
+
+            dropdown.MouseButton1Click:Connect(function()
+                for _, opt in ipairs(options) do
+                    local optBtn = Instance.new("TextButton")
+                    optBtn.Size = UDim2.new(1, -40, 0, 25)
+                    optBtn.Position = UDim2.new(0, 20, 0, #tabFrame:GetChildren() * 30)
+                    optBtn.Text = opt
+                    optBtn.TextColor3 = Color3.new(1, 1, 1)
+                    optBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+                    optBtn.Font = Enum.Font.Gotham
+                    optBtn.TextSize = 12
+                    optBtn.Parent = tabFrame
+                    optBtn.MouseButton1Click:Connect(function()
+                        current = opt
+                        dropdown.Text = text .. ": " .. current
+                        data[key] = current
+                        SaveSettings(name, data)
+                        callback(current)
+                        for _, child in ipairs(tabFrame:GetChildren()) do
+                            if child ~= dropdown and child:IsA("TextButton") and not table.find(options, child.Text) then
+                                child:Destroy()
+                            end
+                        end
+                    end)
+                end
+            end)
+        end
+
+        return elements
+    end
+
+    return Window
 end
 
-MatexFrame.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		beginDrag(input)
-	end
-end)
-
-MatexFrame.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-		UserInputService.InputChanged:Connect(function(i)
-			if i == input and dragging then
-				updateDrag(i)
-			end
-		end)
-	end
-end)
-
--- Show/Hide
-ToggleBtn.MouseButton1Click:Connect(function()
-	MatexFrame.Visible = not MatexFrame.Visible
-end)
-
--- Title Bar
-local TitleBar = Instance.new("TextLabel")
-TitleBar.Size = UDim2.new(1, 0, 0, 40)
-TitleBar.Text = "Matex Hub"
-TitleBar.TextColor3 = Color3.new(1, 1, 1)
-TitleBar.Font = Enum.Font.GothamBold
-TitleBar.TextSize = 18
-TitleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-TitleBar.Parent = MatexFrame
-
--- Tab List
-local TabList = Instance.new("ScrollingFrame")
-TabList.Size = UDim2.new(0, 100, 1, -40)
-TabList.Position = UDim2.new(0, 0, 0, 40)
-TabList.CanvasSize = UDim2.new(0, 0, 2, 0)
-TabList.ScrollBarThickness = 4
-TabList.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-TabList.Parent = MatexFrame
-
--- Content Frame
-local ContentFrame = Instance.new("Frame")
-ContentFrame.Size = UDim2.new(1, -100, 1, -40)
-ContentFrame.Position = UDim2.new(0, 100, 0, 40)
-ContentFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-ContentFrame.Parent = MatexFrame
-
--- Theme + Tabs
-local Theme = {
-	text = Color3.fromRGB(255, 255, 255),
-	background = Color3.fromRGB(25, 25, 25)
-}
-
-local function CreateTab(name)
-	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(1, -10, 0, 40)
-	btn.Position = UDim2.new(0, 5, 0, #TabList:GetChildren() * 45)
-	btn.Text = name
-	btn.TextColor3 = Theme.text
-	btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-	btn.Font = Enum.Font.Gotham
-	btn.TextSize = 14
-	btn.Parent = TabList
-
-	local page = Instance.new("Frame")
-	page.Size = UDim2.new(1, 0, 1, 0)
-	page.BackgroundColor3 = Theme.background
-	page.Visible = false
-	page.Parent = ContentFrame
-
-	btn.MouseButton1Click:Connect(function()
-		for _, p in pairs(ContentFrame:GetChildren()) do
-			p.Visible = false
-		end
-		page.Visible = true
-	end)
-
-	return page
-end
-
--- Welcome Tab
-local welcomeTab = CreateTab("Welcome")
-
--- Player Image
-local playerImage = Instance.new("ImageLabel")
-playerImage.Size = UDim2.new(0, 80, 0, 80)
-playerImage.Position = UDim2.new(0.5, -40, 0, 20)
-playerImage.BackgroundTransparency = 1
-playerImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId="..Player.UserId.."&width=420&height=420&format=png"
-playerImage.Parent = welcomeTab
-
--- Player Name
-local playerName = Instance.new("TextLabel")
-playerName.Size = UDim2.new(1, -20, 0, 30)
-playerName.Position = UDim2.new(0.5, -75, 0, 110) -- Moved below the image
-playerName.BackgroundTransparency = 1
-playerName.Text = "Welcome, " .. Player.Name
-playerName.TextColor3 = Theme.text
-playerName.Font = Enum.Font.GothamBold
-playerName.TextSize = 18
-playerName.TextXAlignment = Enum.TextXAlignment.Center
-playerName.Parent = welcomeTab
-
-welcomeTab.Visible = true
+return Library
