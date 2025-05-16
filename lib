@@ -1,144 +1,181 @@
--- Required services
+-- Custom UI Library with full features
+
+local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local Player = game.Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
-local UIS = game:GetService("UserInputService")
+local UserInputService = game:GetService("UserInputService")
 
--- UI Library
-local UI_Library = {}
+local Library = {}
+Library.Themes = { Midnight = {Background = Color3.fromRGB(15,15,25), Accent = Color3.fromRGB(0, 120, 255), Text = Color3.fromRGB(255,255,255)}, Synapse = {Background = Color3.fromRGB(30,30,30), Accent = Color3.fromRGB(46, 46, 46), Text = Color3.fromRGB(255,255,255)}, Light = {Background = Color3.fromRGB(240,240,240), Accent = Color3.fromRGB(200, 200, 200), Text = Color3.fromRGB(0,0,0)}, Dark = {Background = Color3.fromRGB(20,20,20), Accent = Color3.fromRGB(60, 60, 60), Text = Color3.fromRGB(255,255,255)}, Ocean = {Background = Color3.fromRGB(10, 25, 45), Accent = Color3.fromRGB(0, 153, 204), Text = Color3.fromRGB(255,255,255)} }
 
--- CreateWindow method (to create windows)
-function UI_Library:CreateWindow(windowTitle)
-    -- Create UI container
-    local Window = Instance.new("Frame")
-    Window.Size = UDim2.new(0, 450, 0, 250)
-    Window.Position = UDim2.new(0, 180, 0, 1000)  -- Start at the bottom of the screen
-    Window.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Window.Active = true
-    Window.Visible = false  -- Initially hidden
-    Window.Parent = PlayerGui:FindFirstChild("MatexUI") or PlayerGui -- Parent it to PlayerGui
+function createDraggable(frame) local dragging, dragInput, dragStart, startPos frame.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = true dragStart = input.Position startPos = frame.Position input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end) end end) frame.InputChanged:Connect(function(input) if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then local delta = input.Position - dragStart frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y) end end) end
 
-    -- Tween setup for showing the window
-    local goalVisible = UDim2.new(0, 180, 0, 180)  -- Position to center
-    local goalInvisible = UDim2.new(0, 180, 0, 1000)  -- Position to bottom (invisible)
+function Library:CreateWindow(title, theme) local Theme = self.Themes[theme] or self.Themes.Dark
 
-    -- Set the target position to be at the top center (0, 180, 0, 0)
-    local goalCenter = UDim2.new(0, 180, 0, 0)  -- Position to top-center
-    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)  -- 1 second smooth animation
+local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+ScreenGui.Name = "CustomUILib"
+ScreenGui.ResetOnSpawn = false
 
-    -- Tween for showing the window
-    local tweenShow = TweenService:Create(Window, tweenInfo, {Position = goalCenter})
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 500, 0, 300)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+MainFrame.BackgroundColor3 = Theme.Background
+MainFrame.BorderSizePixel = 0
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.Active = true
+MainFrame.Draggable = true
+createDraggable(MainFrame)
 
-    -- Tween for hiding the window
-    local tweenHide = TweenService:Create(Window, tweenInfo, {Position = goalInvisible})
+local TabList = Instance.new("ScrollingFrame", MainFrame)
+TabList.Name = "TabList"
+TabList.Size = UDim2.new(0, 120, 1, -40)
+TabList.Position = UDim2.new(0, 0, 0, 0)
+TabList.BackgroundColor3 = Theme.Accent
+TabList.ScrollBarThickness = 4
+TabList.CanvasSize = UDim2.new(0, 0, 0, 0)
 
-    -- Add a title to the window
-    local TitleBar = Instance.new("TextLabel")
-    TitleBar.Size = UDim2.new(1, 0, 0, 30)
-    TitleBar.Text = windowTitle or "Untitled Window"
-    TitleBar.TextColor3 = Color3.new(1, 1, 1)
-    TitleBar.Font = Enum.Font.GothamBold
-    TitleBar.TextSize = 16
-    TitleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    TitleBar.Parent = Window
+local TabListLayout = Instance.new("UIListLayout", TabList)
+TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-    -- Add a simple button inside the window
-    local TestButton = Instance.new("TextButton")
-    TestButton.Size = UDim2.new(1, -20, 0, 30)
-    TestButton.Position = UDim2.new(0, 10, 0, 40)
-    TestButton.Text = "Test Button"
-    TestButton.TextColor3 = Color3.new(1, 1, 1)
-    TestButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-    TestButton.Font = Enum.Font.Gotham
-    TestButton.TextSize = 14
-    TestButton.Parent = Window
+local ContentFrame = Instance.new("Frame", MainFrame)
+ContentFrame.Name = "Content"
+ContentFrame.Size = UDim2.new(1, -120, 1, -40)
+ContentFrame.Position = UDim2.new(0, 120, 0, 0)
+ContentFrame.BackgroundTransparency = 1
 
-    TestButton.MouseButton1Click:Connect(function()
-        print("Test Button clicked")
-    end)
+local PlayerInfo = Instance.new("Frame", MainFrame)
+PlayerInfo.Name = "PlayerInfo"
+PlayerInfo.Size = UDim2.new(0, 180, 0, 40)
+PlayerInfo.Position = UDim2.new(0, 10, 1, -40)
+PlayerInfo.BackgroundTransparency = 1
 
-    -- Button to toggle visibility
-    local ToggleButton = Instance.new("TextButton")
-    ToggleButton.Size = UDim2.new(0, 100, 0, 40)
-    ToggleButton.Position = UDim2.new(0, 20, 0, 20)  -- Positioning outside of the frame
-    ToggleButton.Text = "Toggle Window"
-    ToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleButton.Font = Enum.Font.Gotham
-    ToggleButton.TextSize = 14
-    ToggleButton.Parent = PlayerGui:FindFirstChild("MatexUI") or PlayerGui -- Parent to PlayerGui
+local Thumb = Instance.new("ImageLabel", PlayerInfo)
+Thumb.Size = UDim2.new(0, 36, 0, 36)
+Thumb.Position = UDim2.new(0, 0, 0, 2)
+Thumb.BackgroundTransparency = 1
 
-    -- Toggle window visibility when button is clicked
-    ToggleButton.MouseButton1Click:Connect(function()
-        if Window.Visible then
-            tweenHide:Play()  -- Play the animation to hide
-            Window.Visible = false  -- Set window to invisible after animation
-        else
-            Window.Visible = true  -- Set window to visible before starting animation
-            tweenShow:Play()  -- Play the animation to show
+local Text = Instance.new("TextLabel", PlayerInfo)
+Text.Position = UDim2.new(0, 40, 0, 10)
+Text.Size = UDim2.new(1, -40, 0, 20)
+Text.BackgroundTransparency = 1
+Text.TextColor3 = Theme.Text
+Text.TextScaled = true
+Text.TextXAlignment = Enum.TextXAlignment.Left
+
+local player = Players.LocalPlayer
+Text.Text = player.DisplayName or player.Name
+Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+Thumb.Image = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+
+local Window = {}
+
+function Window:CreateTab(tabName)
+    local TabButton = Instance.new("TextButton", TabList)
+    TabButton.Text = tabName
+    TabButton.Size = UDim2.new(1, 0, 0, 30)
+    TabButton.BackgroundColor3 = Theme.Background
+    TabButton.TextColor3 = Theme.Text
+
+    local TabFrame = Instance.new("ScrollingFrame", ContentFrame)
+    TabFrame.Visible = false
+    TabFrame.Size = UDim2.new(1, 0, 1, 0)
+    TabFrame.BackgroundTransparency = 1
+    TabFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+    local Layout = Instance.new("UIListLayout", TabFrame)
+    Layout.SortOrder = Enum.SortOrder.LayoutOrder
+    Layout.Padding = UDim.new(0, 8)
+
+    TabButton.MouseButton1Click:Connect(function()
+        for _, frame in pairs(ContentFrame:GetChildren()) do
+            if frame:IsA("ScrollingFrame") then frame.Visible = false end
         end
+        TabFrame.Visible = true
     end)
 
-    -- Make sure the UI is mobile-friendly
-    -- Adapt window size based on screen size
-    local function updateWindowSize()
-        if UIS.TouchEnabled then
-            -- Mobile devices: Adjust for small screens
-            Window.Size = UDim2.new(0, 300, 0, 200)
-            TitleBar.Size = UDim2.new(1, 0, 0, 30)
-        else
-            -- Desktop: Full-size window
-            Window.Size = UDim2.new(0, 450, 0, 250)
-            TitleBar.Size = UDim2.new(1, 0, 0, 30)
+    local Tab = {}
+
+    function Tab:CreateSection(sectionName)
+        local SectionLabel = Instance.new("TextLabel", TabFrame)
+        SectionLabel.Text = sectionName
+        SectionLabel.Size = UDim2.new(1, -10, 0, 30)
+        SectionLabel.BackgroundTransparency = 1
+        SectionLabel.TextColor3 = Theme.Accent
+        SectionLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+        local Section = {}
+
+        function Section:CreateButton(text, callback)
+            local Button = Instance.new("TextButton", TabFrame)
+            Button.Size = UDim2.new(1, -10, 0, 30)
+            Button.Text = text
+            Button.BackgroundColor3 = Theme.Accent
+            Button.TextColor3 = Theme.Text
+            Button.MouseButton1Click:Connect(callback)
         end
-    end
 
-    -- Call updateWindowSize whenever the screen size changes
-    UIS.Changed:Connect(function()
-        updateWindowSize()
-    end)
-    
-    -- Call once on initialization
-    updateWindowSize()
+        function Section:CreateToggle(text, default, callback)
+            local Toggle = Instance.new("TextButton", TabFrame)
+            Toggle.Size = UDim2.new(1, -10, 0, 30)
+            Toggle.Text = text .. ": " .. tostring(default)
+            Toggle.BackgroundColor3 = Theme.Accent
+            Toggle.TextColor3 = Theme.Text
 
-    -- Handle window dragging for mobile and PC
-    local dragging, dragInput, mousePos, offsetPos
-
-    TitleBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            offsetPos = Window.Position - UDim2.new(0, input.Position.X, 0, input.Position.Y)
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
+            local state = default
+            Toggle.MouseButton1Click:Connect(function()
+                state = not state
+                Toggle.Text = text .. ": " .. tostring(state)
+                callback(state)
             end)
         end
-    end)
 
-    TitleBar.InputChanged:Connect(function(input)
-        if dragging then
-            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-                mousePos = input.Position
-                Window.Position = UDim2.new(0, mousePos.X - offsetPos.X.Offset, 0, mousePos.Y - offsetPos.Y.Offset)
-            end
+        function Section:CreateDropdown(text, options, callback)
+            local Dropdown = Instance.new("TextButton", TabFrame)
+            Dropdown.Size = UDim2.new(1, -10, 0, 30)
+            Dropdown.Text = text .. ": " .. options[1]
+            Dropdown.BackgroundColor3 = Theme.Accent
+            Dropdown.TextColor3 = Theme.Text
+            local index = 1
+            Dropdown.MouseButton1Click:Connect(function()
+                index = (index % #options) + 1
+                Dropdown.Text = text .. ": " .. options[index]
+                callback(options[index])
+            end)
         end
-    end)
 
-    return {
-        Window = Window,
-        Show = function() 
-            Window.Visible = true
-            tweenShow:Play()
-        end,
-        Hide = function() 
-            Window.Visible = false
-            tweenHide:Play()
+        function Section:CreateTextBox(text, callback)
+            local TextBox = Instance.new("TextBox", TabFrame)
+            TextBox.Size = UDim2.new(1, -10, 0, 30)
+            TextBox.PlaceholderText = text
+            TextBox.BackgroundColor3 = Theme.Accent
+            TextBox.TextColor3 = Theme.Text
+            TextBox.FocusLost:Connect(function()
+                callback(TextBox.Text)
+            end)
         end
-    }
+
+        function Section:CreateSlider(name, min, max, default, callback)
+            local Slider = Instance.new("TextButton", TabFrame)
+            Slider.Size = UDim2.new(1, -10, 0, 30)
+            Slider.Text = name .. ": " .. tostring(default)
+            Slider.BackgroundColor3 = Theme.Accent
+            Slider.TextColor3 = Theme.Text
+            local value = default
+            Slider.MouseButton1Click:Connect(function()
+                value = value + 1
+                if value > max then value = min end
+                Slider.Text = name .. ": " .. tostring(value)
+                callback(value)
+            end)
+        end
+
+        return Section
+    end
+
+    return Tab
 end
 
--- Example usage:
+return Window
 
-local lib = UI_Library
-local MyWindow = lib:CreateWindow("Matex Hub") -- Create a new window with the title "Matex Hub"
+end
+
+return Library
