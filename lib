@@ -74,15 +74,15 @@ notifLayout.Padding = UDim.new(0, 5)
     layout.SortOrder = Enum.SortOrder.LayoutOrder
     layout.Padding = UDim.new(0, 5)
 
-    local tabContent = Instance.new("ScrollingFrame", MatexFrame)
-tabContent.Name = "contentTab"
-tabContent.BackgroundTransparency = 1
-tabContent.Size = UDim2.new(1, 0, 1, 0)
-tabContent.Visible = false
-tabContent.ScrollBarThickness = 4
-tabContent.AutomaticCanvasSize = Enum.AutomaticSize.Y
-tabContent.CanvasSize = UDim2.new(0, 0, 0, 0)
-tabContent.ClipsDescendants = true
+    local selectedContent = Instance.new("ScrollingFrame", MatexFrame)
+selectedContent.Name = "contentTab"
+selectedContent.BackgroundTransparency = 1
+selectedContent.Size = UDim2.new(1, 0, 1, 0)
+selectedContent.Visible = false
+selectedContent.ScrollBarThickness = 4
+selectedContent.AutomaticCanvasSize = Enum.AutomaticSize.Y
+selectedContent.CanvasSize = UDim2.new(0, 0, 0, 0)
+selectedContent.ClipsDescendants = true
 
     -- Player image
     local userId = plr.UserId
@@ -157,7 +157,7 @@ end
         contentLayout.Padding = UDim.new(0, 5)
 
         tabBtn.MouseButton1Click:Connect(function()
-            for _, t in pairs(tabContent:GetChildren()) do
+            for _, t in pairs(selectedContent:GetChildren()) do
                 if t:IsA("Frame") then t.Visible = false end
             end
             tabContent.Visible = true
