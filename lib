@@ -137,7 +137,7 @@ end
         tabBtn.Size = UDim2.new(1, 0, 0, 30)
         tabBtn.Text = name
         tabBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-        tabBtn.TextColor3 = Color3.new(0, 0, 0)
+        tabBtn.TextColor3 = Color3.new(255, 255, 255)
         tabBtn.BorderSizePixel = 0
         tabBtn.Name = name
 
@@ -161,18 +161,51 @@ end
 
         local tab = {}
 
+        function tab:CreateSection(title)
+    local section = Instance.new("TextLabel", tabContent)
+    section.Size = UDim2.new(1, 0, 0, 20)
+    section.BackgroundTransparency = 1
+    section.Text = "  " .. title
+    section.TextColor3 = Color3.new(1, 1, 1)
+    section.Font = Enum.Font.SourceSansBold
+    section.TextXAlignment = Enum.TextXAlignment.Left
+    section.TextScaled = true
+end
+
         function tab:CreateButton(text, callback)
             local btn = Instance.new("TextButton", tabContent)
             btn.Size = UDim2.new(1, 0, 0, 20)
             btn.Position = UDim2.new(0.5, 0, 0)
             btn.Text = text
             btn.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
-            btn.TextColor3 = Color3.new(0, 0, 0)
+            btn.TextColor3 = Color3.new(255, 255, 255)
             btn.BorderSizePixel = 0
             btn.MouseButton1Click:Connect(function()
                 pcall(callback)
             end)
         end
+
+        function tab:CreateInput(placeholderText, callback)
+    local inputBox = Instance.new("TextBox", tabContent)
+    inputBox.Size = UDim2.new(1, 0, 0, 25)
+    inputBox.PlaceholderText = placeholderText or "Enter text..."
+    inputBox.Text = ""
+    inputBox.TextColor3 = Color3.new(1, 1, 1)
+    inputBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    inputBox.BorderSizePixel = 0
+    inputBox.TextScaled = true
+    inputBox.Font = Enum.Font.SourceSans
+    
+    Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0, 4)
+
+    inputBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            pcall(function()
+                callback(inputBox.Text)
+            end)
+        end
+    end)
+end
 
         return tab
     end
