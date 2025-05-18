@@ -179,7 +179,7 @@ end
             toggle.Text = "✓ " .. text
             toggle.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
         else
-            toggle.Text = "✕ " .. text
+            toggle.Text = "O " .. text
             toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         end
     end
