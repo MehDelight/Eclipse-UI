@@ -74,9 +74,8 @@ notifLayout.Padding = UDim.new(0, 5)
     layout.SortOrder = Enum.SortOrder.LayoutOrder
     layout.Padding = UDim.new(0, 5)
 
-    local tabContent = Instance.new("ScrollingFrame")
-tabContent.Name = "Content"
-tabContent.Parent = ContentFrame
+    local tabContent = Instance.new("ScrollingFrame", MatexUI)
+tabContent.Name = "contentTab"
 tabContent.BackgroundTransparency = 1
 tabContent.Size = UDim2.new(1, 0, 1, 0)
 tabContent.Visible = false
