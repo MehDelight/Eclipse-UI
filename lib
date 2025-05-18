@@ -161,6 +161,54 @@ end
 
         local tab = {}
 
+function tab:CreateSlider(label, min, max, default, callback)
+    min = min or 1
+    max = max or 500
+    default = math.clamp(default or min, min, max)
+
+    local holder = Instance.new("Frame", tabContent)
+    holder.Size = UDim2.new(1, 0, 0, 25)
+    holder.BackgroundTransparency = 1
+
+    local labelBox = Instance.new("TextLabel", holder)
+    labelBox.Size = UDim2.new(0.6, 0, 1, 0)
+    labelBox.Position = UDim2.new(0, 0, 0, 0)
+    labelBox.BackgroundTransparency = 1
+    labelBox.Text = label .. ": " .. default
+    labelBox.TextColor3 = Color3.new(1, 1, 1)
+    labelBox.Font = Enum.Font.SourceSansBold
+    labelBox.TextScaled = true
+    labelBox.TextXAlignment = Enum.TextXAlignment.Left
+
+    local input = Instance.new("TextBox", holder)
+    input.Size = UDim2.new(0.4, -5, 1, 0)
+    input.Position = UDim2.new(0.6, 5, 0, 0)
+    input.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    input.TextColor3 = Color3.new(1, 1, 1)
+    input.Text = tostring(default)
+    input.TextScaled = true
+    input.Font = Enum.Font.SourceSans
+    input.BorderSizePixel = 0
+    input.ClearTextOnFocus = false
+    Instance.new("UICorner", input).CornerRadius = UDim.new(0, 4)
+
+    input.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local val = tonumber(input.Text)
+            if val then
+                val = math.clamp(math.floor(val), min, max)
+                input.Text = tostring(val)
+                labelBox.Text = label .. ": " .. val
+                if callback then
+                    pcall(callback, val)
+                end
+            else
+                input.Text = tostring(default)
+            end
+        end
+    end)
+end
+
         function tab:CreateToggle(text, default, callback)
     local toggle = Instance.new("TextButton", tabContent)
     toggle.Size = UDim2.new(1, 0, 0, 25)
