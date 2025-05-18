@@ -73,12 +73,16 @@ notifLayout.Padding = UDim.new(0, 5)
     layout.SortOrder = Enum.SortOrder.LayoutOrder
     layout.Padding = UDim.new(0, 5)
 
-    local ContentFrame = Instance.new("Frame", MatexFrame)
-    ContentFrame.Name = "SelectedTab"
-    ContentFrame.Position = UDim2.new(0, 120, 0, 20)
-    ContentFrame.Size = UDim2.new(0, 200, 0, 170)
-    ContentFrame.BackgroundColor3 = Color3.fromRGB(162, 162, 162)
-    ContentFrame.BorderSizePixel = 2
+    local tabContent = Instance.new("ScrollingFrame")
+tabContent.Name = name .. "_Content"
+tabContent.Parent = ContentFrame
+tabContent.BackgroundTransparency = 1
+tabContent.Size = UDim2.new(1, 0, 1, 0)
+tabContent.Visible = false
+tabContent.ScrollBarThickness = 4
+tabContent.AutomaticCanvasSize = Enum.AutomaticSize.Y
+tabContent.CanvasSize = UDim2.new(0, 0, 0, 0)
+tabContent.ClipsDescendants = true
 
     -- Player image
     local userId = plr.UserId
