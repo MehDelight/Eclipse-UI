@@ -156,7 +156,7 @@ local QSSection = GameTab:CreateSection("Quick Script")
 GameTab:CreateButton({
     Name = "Infinite Yield",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/edgey77/infiniteyield/master/source"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
     end,
 })
 local GSSection = GameTab:CreateSection("Game Script")
