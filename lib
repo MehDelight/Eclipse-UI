@@ -86,7 +86,7 @@ function MatexLib:CreateWindow(title)
 
     function window:CreateTab(name)
         local tabBtn = Instance.new("TextButton", ScrollFrame)
-        tabBtn.Size = UDim2.new(1, -10, 0, 30)
+        tabBtn.Size = UDim2.new(1, 0, 0, 30)
         tabBtn.Text = name
         tabBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
         tabBtn.TextColor3 = Color3.new(0, 0, 0)
@@ -115,8 +115,9 @@ function MatexLib:CreateWindow(title)
 
         function tab:CreateButton(text, callback)
             local btn = Instance.new("TextButton", tabContent)
-            btn.Size = UDim2.new(1, 150, 0, 30)
+            btn.Size = UDim2.new(1, -10, 0, 30)
             btn.Position = UDim2.new(0.5, 0, 0)
+            btn.AnchorPoint = Vector2.new(0, 0)
             btn.Text = text
             btn.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
             btn.TextColor3 = Color3.new(0, 0, 0)
