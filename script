@@ -381,23 +381,31 @@ MainTab:CreateButton({
 })
 
 -- Teleport to Player
-MainTab:CreateInput({
-    Name = "Teleport to player",
-    CurrentValue = "",
-    PlaceholderText = "Put the player name to teleport",
-    RemoveTextAfterFocusLost = false,
-    Flag = "Input1",
-    Callback = function(Text)
-        local TargetPlayer = Players:FindFirstChild(Text)
-        if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            local myRoot = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-            if myRoot then
-                myRoot.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
-            end
-        else
-            warn("Target player or their character not found.")
-        end
-    end,
+local TweenPlayer = MainTab:CreateInput({
+   Name = "Tween to player",
+   CurrentValue = "",
+   PlaceholderText = "Put the player name to teleport",
+   RemoveTextAfterFocusLost = false,
+   Flag = "Input1",
+   Callback = function(Text)
+       local ts = game:GetService("TweenService")
+       local ti = TweenInfo.new(1, Enum.EasingStyle.Linear)
+       local Player = game.Players.LocalPlayer
+       
+       local char = Player.Character or Player.CharacterAdded:Wait()
+       local root = char:WaitForChild("HumanoidRootPart")
+       
+       local TargetPlayer = game.Players:FindFirstChild(Text)
+       if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+           local Goal = {}
+           Goal.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
+
+           local Tween = ts:Create(root, ti, Goal)
+           Tween:Play()
+       else
+           warn("Target player or their HumanoidRootPart not found!")
+       end
+   end
 })
 
 MainTab:CreateToggle({
