@@ -23,29 +23,6 @@ function MatexLib:CreateWindow(title)
     MatexFrame.Parent = MatexUI
     Instance.new("UICorner", MatexFrame).CornerRadius = UDim.new(0, 2)
 
-function window:Notify(text, duration)
-    duration = duration or 3
-
-    local notif = Instance.new("TextLabel", NotifHolder)
-    notif.Size = UDim2.new(1, 0, 0, 25)
-    notif.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    notif.TextColor3 = Color3.new(1, 1, 1)
-    notif.TextScaled = true
-    notif.Font = Enum.Font.SourceSansBold
-    notif.Text = text
-    notif.ZIndex = 11
-    notif.BorderSizePixel = 0
-
-    local corner = Instance.new("UICorner", notif)
-    corner.CornerRadius = UDim.new(0, 4)
-
-    task.delay(duration, function()
-        if notif then
-            notif:Destroy()
-        end
-    end)
-end
-
 local NotifHolder = Instance.new("Frame", MatexFrame)
 NotifHolder.Name = "NotifHolder"
 NotifHolder.Size = UDim2.new(1, -10, 0, 100)
@@ -131,6 +108,29 @@ nameLabel.Text = plr.Name
 
     -- Return tab creator
     local window = {}
+
+function window:Notify(text, duration)
+    duration = duration or 3
+
+    local notif = Instance.new("TextLabel", NotifHolder)
+    notif.Size = UDim2.new(1, 0, 0, 25)
+    notif.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    notif.TextColor3 = Color3.new(1, 1, 1)
+    notif.TextScaled = true
+    notif.Font = Enum.Font.SourceSansBold
+    notif.Text = text
+    notif.ZIndex = 11
+    notif.BorderSizePixel = 0
+
+    local corner = Instance.new("UICorner", notif)
+    corner.CornerRadius = UDim.new(0, 4)
+
+    task.delay(duration, function()
+        if notif then
+            notif:Destroy()
+        end
+    end)
+end
 
     function window:CreateTab(name)
         local tabBtn = Instance.new("TextButton", ScrollFrame)
