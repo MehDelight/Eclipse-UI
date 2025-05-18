@@ -161,6 +161,40 @@ end
 
         local tab = {}
 
+        function tab:CreateToggle(text, default, callback)
+    local toggle = Instance.new("TextButton", tabContent)
+    toggle.Size = UDim2.new(1, 0, 0, 25)
+    toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    toggle.TextColor3 = Color3.new(1, 1, 1)
+    toggle.TextScaled = true
+    toggle.Font = Enum.Font.SourceSansBold
+    toggle.BorderSizePixel = 0
+    toggle.AutoButtonColor = false
+    Instance.new("UICorner", toggle).CornerRadius = UDim.new(0, 4)
+
+    local state = default or false
+
+    local function update()
+        if state then
+            toggle.Text = "✓ " .. text
+            toggle.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+        else
+            toggle.Text = "✕ " .. text
+            toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        end
+    end
+
+    update()
+
+    toggle.MouseButton1Click:Connect(function()
+        state = not state
+        update()
+        if callback then
+            pcall(callback, state)
+        end
+    end)
+end
+
         function tab:CreateSection(title)
     local section = Instance.new("TextLabel", tabContent)
     section.Size = UDim2.new(1, 0, 0, 20)
