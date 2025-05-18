@@ -65,30 +65,103 @@ task.spawn(function()
     end
 end)
 
--- Tabs
-local PlayerTab = Window:CreateTab("Player", 4483362458)
+-- Tabs --
+local MainTab = Window:CreateTab("Main", 4483362458)
 local GameTab = Window:CreateTab("Games", 4483362458)
-local OtherTab = Window:CreateTab("Other", 4483362458)
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
--- Destroy UI
-SettingsTab:CreateKeybind({
-    Name = "Destroy UI",
-    CurrentKeybind = "Q",
-    Callback = function()
-        Rayfield:Destroy()
+-- Sections --
+
+local PlayerSection = PlayerTab:CreateSection("Player")
+
+-- WalkSpeed
+PlayerTab:CreateSlider({
+    Name = "WalkSpeed",
+    Range = {16, 500},
+    Increment = 1,
+    Suffix = "Speed",
+    CurrentValue = 16,
+    Callback = function(Value)
+        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = Value
+        end
     end,
 })
 
+-- JumpPower
+PlayerTab:CreateSlider({
+    Name = "JumpPower",
+    Range = {50, 500},
+    Increment = 1,
+    CurrentValue = 50,
+    Callback = function(Value)
+        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.JumpPower = Value
+        end
+    end,
+})
+
+-- Noclip
+local noclipEnabled = false
+PlayerTab:CreateToggle({
+    Name = "Noclip",
+    CurrentValue = false,
+    Callback = function(Value)
+        noclipEnabled = Value
+        task.spawn(function()
+            while noclipEnabled do
+                local character = Player.Character
+                if character then
+                    for _, part in ipairs(character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.CanCollide = false
+                        end
+                    end
+                end
+                task.wait()
+            end
+        end)
+    end,
+})
+
+local FeaturesSection = PlayerTab:CreateSection("Features")
+local AFSection = GameTab:CreateSection("Auto Farm")
+
+-- Auto Hoops
+GameTab:CreateToggle({
+    Name = "Legends of Speed Auto Hoops",
+    CurrentValue = false,
+    Flag = "AutoHoopsToggle1",
+    Callback = function(Value)
+        _G.Auto = Value
+        task.spawn(function()
+            while _G.Auto do
+                local rootPart = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+                if rootPart then
+                    for _, v in ipairs(workspace.Hoops:GetChildren()) do
+                        rootPart.CFrame = v.CFrame
+                        task.wait(0.2)
+                    end
+                end
+                task.wait(0.5)
+            end
+        end)
+    end,
+})
+
+local QSSection = GameTab:CreateSection("Quick Script")
 -- Infinite Yield
-OtherTab:CreateButton({
+GameTab:CreateButton({
     Name = "Infinite Yield",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/edgey77/infiniteyield/master/source"))()
     end,
 })
+local GSSection = GameTab:CreateSection("Game Script")
 
-OtherTab:CreateButton({
+GameTab:CreateButton({
     Name = "Prison Life (PrisonWare)",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Denverrz/scripts/master/PRISONWARE_v1.3.txt"))();
@@ -125,9 +198,9 @@ local DRButton = GameTab:CreateButton({
 
    loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))()
 end,
+
 })
 
--- Tower of Hell
 local TohButton = GameTab:CreateButton({
    Name = "Tower of Hell",
    Callback = function()
@@ -198,8 +271,8 @@ MainTab:AddButton({
 
 MainTab:AddButton({
 	Name = "All gear",
-	Callback = function()
-      		local j = game.ReplicatedStorage.Assets.Gear.jump:Clone()
+	Callback = function
+local j = game.ReplicatedStorage.Assets.Gear.jump:Clone()
 local g = game.ReplicatedStorage.Assets.Gear.gravity:Clone()
 local h = game.ReplicatedStorage.Assets.Gear.hook:Clone()
 local ho = game.ReplicatedStorage.Assets.Gear.hourglass:Clone()
@@ -249,54 +322,16 @@ end
    end,
 })
 
--- Auto Hoops
-GameTab:CreateToggle({
-    Name = "Legends of Speed Auto Hoops",
-    CurrentValue = false,
-    Flag = "AutoHoopsToggle1",
-    Callback = function(Value)
-        _G.Auto = Value
-        task.spawn(function()
-            while _G.Auto do
-                local rootPart = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-                if rootPart then
-                    for _, v in ipairs(workspace.Hoops:GetChildren()) do
-                        rootPart.CFrame = v.CFrame
-                        task.wait(0.2)
-                    end
-                end
-                task.wait(0.5)
-            end
-        end)
-    end,
-})
 
--- WalkSpeed
-PlayerTab:CreateSlider({
-    Name = "WalkSpeed",
-    Range = {16, 200},
-    Increment = 1,
-    Suffix = "Speed",
-    CurrentValue = 16,
-    Callback = function(Value)
-        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.WalkSpeed = Value
-        end
-    end,
-})
 
--- JumpPower
-PlayerTab:CreateSlider({
-    Name = "JumpPower",
-    Range = {50, 200},
-    Increment = 1,
-    CurrentValue = 50,
-    Callback = function(Value)
-        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.JumpPower = Value
-        end
+-------
+
+-- Destroy UI
+SettingsTab:CreateKeybind({
+    Name = "Destroy UI",
+    CurrentKeybind = "Q",
+    Callback = function()
+        Rayfield:Destroy()
     end,
 })
 
@@ -391,29 +426,6 @@ UserInputService.JumpRequest:Connect(function()
         end
     end
 end)
-
--- Noclip
-local noclipEnabled = false
-PlayerTab:CreateToggle({
-    Name = "Noclip",
-    CurrentValue = false,
-    Callback = function(Value)
-        noclipEnabled = Value
-        task.spawn(function()
-            while noclipEnabled do
-                local character = Player.Character
-                if character then
-                    for _, part in ipairs(character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.CanCollide = false
-                        end
-                    end
-                end
-                task.wait()
-            end
-        end)
-    end,
-})
 
 -- ESP
 local espEnabled = false
