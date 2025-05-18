@@ -154,7 +154,7 @@ end
         contentLayout.Padding = UDim.new(0, 5)
 
         tabBtn.MouseButton1Click:Connect(function()
-            for _, t in pairs(selectedContent:GetChildren()) do
+            for _, t in pairs(ContentFrame:GetChildren()) do
                 if t:IsA("Frame") then t.Visible = false end
             end
             tabContent.Visible = true
