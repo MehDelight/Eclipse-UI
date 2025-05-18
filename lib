@@ -161,6 +161,55 @@ end
 
         local tab = {}
 
+function tab:CreateDropdown(options, callback)
+    local dropdownHolder = Instance.new("Frame", tabContent)
+    dropdownHolder.Size = UDim2.new(1, 0, 0, 30 + (#options * 25))
+    dropdownHolder.BackgroundTransparency = 1
+
+    local dropdownButton = Instance.new("TextButton", dropdownHolder)
+    dropdownButton.Size = UDim2.new(1, 0, 0, 30)
+    dropdownButton.Text = "Select an option"
+    dropdownButton.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+    dropdownButton.TextColor3 = Color3.new(1, 1, 1)
+    dropdownButton.BorderSizePixel = 0
+    Instance.new("UICorner", dropdownButton).CornerRadius = UDim.new(0, 4)
+
+    local listLayout = Instance.new("UIListLayout", dropdownHolder)
+    listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    listLayout.Padding = UDim.new(0, 5)
+
+    for _, option in ipairs(options) do
+        local item = Instance.new("TextButton", dropdownHolder)
+        item.Size = UDim2.new(1, 0, 0, 25)
+        item.Text = option
+        item.BackgroundColor3 = Color3.fromRGB(90, 90, 90)
+        item.TextColor3 = Color3.new(1, 1, 1)
+        item.Visible = false
+        item.BorderSizePixel = 0
+        Instance.new("UICorner", item).CornerRadius = UDim.new(0, 4)
+
+        item.MouseButton1Click:Connect(function()
+            dropdownButton.Text = option
+            for _, child in ipairs(dropdownHolder:GetChildren()) do
+                if child:IsA("TextButton") and child ~= dropdownButton then
+                    child.Visible = false
+                end
+            end
+            pcall(callback, option)
+        end)
+    end
+
+    local isOpen = false
+    dropdownButton.MouseButton1Click:Connect(function()
+        isOpen = not isOpen
+        for _, child in ipairs(dropdownHolder:GetChildren()) do
+            if child:IsA("TextButton") and child ~= dropdownButton then
+                child.Visible = isOpen
+            end
+        end
+    end)
+end
+
 function tab:CreateSlider(label, min, max, default, callback)
     min = min or 1
     max = max or 500
