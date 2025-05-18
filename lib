@@ -137,7 +137,7 @@ end
         tabBtn.Size = UDim2.new(1, 0, 0, 30)
         tabBtn.Text = name
         tabBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-        tabBtn.TextColor3 = Color3.new(255, 255, 255)
+        tabBtn.TextColor3 = Color3.new(1, 1, 1)
         tabBtn.BorderSizePixel = 0
         tabBtn.Name = name
 
@@ -174,6 +174,7 @@ end
 
         function tab:CreateButton(text, callback)
             local btn = Instance.new("TextButton", tabContent)
+Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
             btn.Size = UDim2.new(1, 0, 0, 20)
             btn.Position = UDim2.new(0.5, 0, 0)
             btn.Text = text
@@ -195,7 +196,7 @@ end
     inputBox.BorderSizePixel = 0
     inputBox.TextScaled = true
     inputBox.Font = Enum.Font.SourceSans
-    
+    inputBox.TextXAlignment = Enum.TextXAlignment.Left
     Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0, 4)
 
     inputBox.FocusLost:Connect(function(enterPressed)
