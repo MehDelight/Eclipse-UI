@@ -81,18 +81,17 @@ function MatexLib:CreateWindow(title)
     avatarImage.ScaleType = Enum.ScaleType.Fit
     Instance.new("UICorner", avatarImage).CornerRadius = UDim.new(1, 0)
 
-    -- Player name label
+    
 local nameLabel = Instance.new("TextLabel", MatexFrame)
 nameLabel.Name = "PlayerName"
 nameLabel.Size = UDim2.new(0, 100, 0, 20)
-nameLabel.Position = UDim2.new(0, 45, 1, -25) -- next to the avatarImage
+nameLabel.Position = UDim2.new(0, 5, 1, -25) -- right under the avatar
 nameLabel.BackgroundTransparency = 1
 nameLabel.TextColor3 = Color3.new(1, 1, 1)
 nameLabel.TextScaled = true
-nameLabel.Font = Enum.Font.SourceSans
-nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+nameLabel.Font = Enum.Font.SourceSansBold
+nameLabel.TextXAlignment = Enum.TextXAlignment.Center
 nameLabel.Text = plr.Name
-nameLabel.TextScaled = true
 
     -- Return tab creator
     local window = {}
