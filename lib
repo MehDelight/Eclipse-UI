@@ -142,13 +142,17 @@ end
         tabBtn.BorderSizePixel = 0
         tabBtn.Name = name
 
-        local tabContent = Instance.new("Frame")
-        tabContent.Name = name .. "_Content"
-        tabContent.Parent = ContentFrame
-        tabContent.BackgroundTransparency = 1
-        tabContent.Size = UDim2.new(1, 0, 1, 0)
-        tabContent.Visible = false
-
+        local tabContent = Instance.new("ScrollingFrame")
+tabContent.Name = name .. "_Content"
+tabContent.Parent = ContentFrame
+tabContent.BackgroundTransparency = 1
+tabContent.Size = UDim2.new(1, 0, 1, 0)
+tabContent.Visible = false
+tabContent.CanvasSize = UDim2.new(0, 0, 0, 0)
+tabContent.AutomaticCanvasSize = Enum.AutomaticSize.Y
+tabContent.ScrollBarThickness = 4
+tabContent.ScrollingDirection = Enum.ScrollingDirection.Y
+tabContent.ClipsDescendants = true
         local contentLayout = Instance.new("UIListLayout", tabContent)
         contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
         contentLayout.Padding = UDim.new(0, 5)
