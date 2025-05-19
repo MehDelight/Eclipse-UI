@@ -17,6 +17,7 @@ function MatexLib:CreateWindow(title)
 	Main.AnchorPoint = Vector2.new(0.5, 0.5)
 	Main.Name = "Main"
 	Main.Parent = MatexUI
+        Main.Draggable = true
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
