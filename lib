@@ -140,7 +140,7 @@ tabContent.ClipsDescendants = true
 
         local tab = {}
 
-function Tab:CreateKeybind(name, defaultKey, callback)
+function tab:CreateKeybind(name, defaultKey, callback)
     local keybind = Instance.new("Frame")
     keybind.Size = UDim2.new(1, -10, 0, 30)
     keybind.BackgroundTransparency = 1
