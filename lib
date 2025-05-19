@@ -166,6 +166,48 @@ tabContent.ClipsDescendants = true
 
         local tab = {}
 
+function Tab:CreateKeybind(name, defaultKey, callback)
+    local keybind = Instance.new("Frame")
+    keybind.Size = UDim2.new(1, -10, 0, 30)
+    keybind.BackgroundTransparency = 1
+    keybind.Parent = self.Content
+
+    local label = Instance.new("TextLabel")
+    label.Text = name
+    label.Size = UDim2.new(0.5, 0, 1, 0)
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.BackgroundTransparency = 1
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.Parent = keybind
+
+    local button = Instance.new("TextButton")
+    button.Text = defaultKey.Name
+    button.Size = UDim2.new(0.4, 0, 1, 0)
+    button.Position = UDim2.new(0.6, 0, 0, 0)
+    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.Parent = keybind
+
+    local currentKey = defaultKey
+    local awaitingInput = false
+
+    button.MouseButton1Click:Connect(function()
+        button.Text = "Press a key..."
+        awaitingInput = true
+    end)
+
+    local inputConnection
+    inputConnection = game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and awaitingInput and input.UserInputType == Enum.UserInputType.Keyboard then
+            currentKey = input.KeyCode
+            button.Text = currentKey.Name
+            awaitingInput = false
+        elseif not gameProcessed and input.KeyCode == currentKey then
+            callback()
+        end
+    end)
+end
+
 function tab:CreateDropdown(options, callback)
     local dropdownHolder = Instance.new("Frame", tabContent)
     dropdownHolder.Size = UDim2.new(1, 0, 0, 30 + (#options * 25))
