@@ -306,13 +306,13 @@ end
 
         function tab:CreateButton(text, callback)
             local btn = Instance.new("TextButton", tabContent)
-Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
             btn.Size = UDim2.new(1, 0, 0, 20)
             btn.Position = UDim2.new(0.5, 0, 0)
             btn.Text = text
             btn.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
-            btn.TextColor3 = Color3.new(255, 255, 255)
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
             btn.BorderSizePixel = 0
+            Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
             btn.MouseButton1Click:Connect(function()
                 pcall(callback)
             end)
