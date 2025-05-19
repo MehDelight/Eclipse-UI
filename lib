@@ -10,7 +10,7 @@ function MatexLib:CreateWindow(title)
 	MatexUI.Parent = playerGui
 
 	local Main = Instance.new("Frame")
-	Main.Size = UDim2.new(0, 600, 0, 400)
+	Main.Size = UDim2.new(0, 350, 0, 240)
 	Main.Position = UDim2.new(0, 150, 0, 100)
 	Main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 	Main.BorderSizePixel = 0
