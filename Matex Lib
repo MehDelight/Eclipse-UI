@@ -144,7 +144,7 @@ function tab:CreateKeybind(name, defaultKey, callback)
 local keybind = Instance.new("Frame")
 keybind.Size = UDim2.new(1, -10, 0, 30)
 keybind.BackgroundTransparency = 1
-keybind.Parent = self.Content
+keybind.Parent = tabContent
 
 local label = Instance.new("TextLabel")
 label.Text = name
