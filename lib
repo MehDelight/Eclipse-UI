@@ -30,7 +30,7 @@ NotificationHolder.Position = UDim2.new(1, -320, 1, -10)
 NotificationHolder.BackgroundTransparency = 1
 NotificationHolder.ZIndex = 100
 NotificationHolder.AnchorPoint = Vector2.new(0, 1)
-NotificationHolder.Parent = game:GetService("CoreGui") or gethui()
+NotificationHolder.Parent = MatexUI
 
     local HubLabel = Instance.new("TextLabel", MatexFrame)
     HubLabel.Size = UDim2.new(0, 100, 0, 20)
