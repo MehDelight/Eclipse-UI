@@ -97,10 +97,23 @@ MainTab:CreateSlider({
     CurrentValue = 50,
     Callback = function(Value)
         local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
-        if humanoid.JumpPower = true then
+        if humanoid then
             humanoid.JumpPower = Value
-        else
+
+        end
+    end,
+})
+
+MainTab:CreateSlider({
+    Name = "Jump Height(if the jumppower didnt work",
+    Range = {8, 500},
+    Increment = 1,
+    CurrentValue = 50,
+    Callback = function(Value)
+        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
             humanoid.JumpHeight = Value
+
         end
     end,
 })
