@@ -15,7 +15,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 -- Create Main Window
 local Window = Rayfield:CreateWindow({
     Name = "Eclipse UI",
-    LoadingTitle = "Welcome to the Void",
+    LoadingTitle = "Welcome to the Hub",
     LoadingSubtitle = "by Delight",
     ConfigurationSaving = {
         Enabled = true,
@@ -58,7 +58,7 @@ task.spawn(function()
         sound:Play()
         Rayfield:Notify({
             Title = "Script Hub Loaded",
-            Content = "Version: Unknown (Failed to load)",
+            Content = "Version: 2.0",
             Duration = 6,
             Image = 4483362458,
         })
@@ -91,14 +91,16 @@ MainTab:CreateSlider({
 
 -- JumpPower
 MainTab:CreateSlider({
-    Name = "JumpPower",
+    Name = "Jump Power",
     Range = {50, 500},
     Increment = 1,
     CurrentValue = 50,
     Callback = function(Value)
         local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
+        if humanoid.JumpPower = true then
             humanoid.JumpPower = Value
+        else
+            humanoid.JumpHeight = Value
         end
     end,
 })
