@@ -1,0 +1,500 @@
+local Luna = loadstring(game:HttpGet("https://raw.githubusercontent.com/Nebula-Softworks/Luna-Interface-Suite/refs/heads/main/source.lua", true))()
+
+local Window = Luna:CreateWindow({
+	Name = "Lunar X",
+	Subtitle = nil,
+	LogoID = "82795327169782",
+	LoadingEnabled = true,
+	LoadingTitle = "Lunar Interface Suite.",
+	LoadingSubtitle = "by MehDelight",
+
+	ConfigSettings = {
+		RootFolder = nil, -- The Root Folder Is Only If You Have A Hub With Multiple Game Scripts and u may remove it. DO NOT ADD A SLASH
+		ConfigFolder = "Lunar X" -- The Name Of The Folder Where Luna Will Store Configs For This Script. DO NOT ADD A SLASH
+	},
+
+	KeySystem = false,
+	KeySettings = {
+		Title = "Lunar Key System",
+		Subtitle = "Key System",
+		Note = "Use key: Enlighten",
+		SaveInRoot = false,
+		SaveKey = true,
+		Key = {"Enlighten"},
+		SecondAction = {
+			Enabled = false, -- Set to false if you do not want a second action,
+			Type = "Link", -- Link / Discord.
+			Parameter = "https://discord.gg/7grQpgXDyQ"
+		}
+	}
+})
+
+Luna:Notification({ 
+	Title = "Lunar X Loaded!",
+	Icon = "notifications_active",
+	ImageSource = "Material",
+	Content = "Eclipse Hub has Loaded successfully!."
+})
+
+Window:CreateHomeTab({
+	SupportedExecutors = {"Krnl", "Delta", "Ronix", "Fluxus", "Codex", "Synapse X"},
+	DiscordInvite = "https://discord.gg/7grQpgXDyQ",
+	Icon = 1,
+})
+
+local Tab = Window:CreateTab({
+	Name = "Main",
+	Icon = "view_in_ar",
+	ImageSource = "Material",
+	ShowTitle = true
+})
+
+if game.PlaceId == 1962086868 then
+local Toh = Window:CreateTab({
+	Name = "Tower of hell",
+	Icon = "view_in_ar",
+	ImageSource = "Material",
+	ShowTitle = true
+})
+
+Toh:CreateSection("Tower of hell")
+local Bypass = Toh:CreateButton({
+	Name = "Bypass Anticheat",
+	Description = nil,
+    	Callback = function()
+         local playerscripts = game:GetService'Players'.LocalPlayer.PlayerScripts
+
+local script1 = playerscripts.LocalScript
+local script2 = playerscripts.LocalScript2
+
+local script1signal = script1.Changed
+local script2signal = script2.Changed
+
+for i, connection in next, getconnections(script1signal) do
+    connection:Disable()
+end
+for i, connection in next, getconnections(script2signal) do
+    connection:Disable()
+end
+
+script1:Destroy()
+script2:Destroy()
+    	end
+})
+
+local Gears = Toh:CreateButton({
+	Name = "Get all Gear",
+	Description = nil,
+    	Callback = function()
+         local rs = game:GetService("ReplicatedStorage")
+         local plr = game.Players.LocalPlayer
+         local j = rs.Assets.Gear.jump:Clone()
+         local g = rs.Assets.Gear.gravity:Clone()
+         local h = rs.Assets.Gear.hook:Clone()
+         local ho = rs.Assets.Gear.hourglass:Clone()
+         local f = rs.Assets.Gear.fusion:Clone()
+         j.Parent = plr.Backpack
+         f.Parent = plr.Backpack
+         h.Parent = plr.Backpack
+         ho.Parent = plr.Backpack
+         g.Parent = plr.Backpack
+    	end
+})
+
+local Godmode = Toh:CreateButton({
+	Name = "God mode",
+	Description = nil,
+    	Callback = function()
+         local player = game.Players.LocalPlayer
+local character = player.Character
+
+function GodMode()
+    character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+        if character.Humanoid.Health < 100 then
+            character.Humanoid.Health = 100
+        end
+    end)
+end
+
+
+GodMode()
+    	end
+})
+
+elseif game.PlaceId == 83312952548612 then
+
+local Trolltower2 = Window:CreateTab({
+	Name = "Troll is a pinning tower 2",
+	Icon = "view_in_ar",
+	ImageSource = "Material",
+	ShowTitle = true
+})
+Trolltower2:CreateSection("Troll")
+
+local TPbtn = Trolltower2:CreateButton({
+	Name = "Teleport to troll button",
+	Description = nil,
+    	Callback = function()
+         local char = game.Players.LocalPlayer.Character
+         local root = char:WaitForChild("HumanoidRootPart")
+         local part = game.Workspace.Gudock
+         root.CFrame = part.CFrame + Vector3.new(0, 5, 0)
+    	end
+})
+
+local Disappearparts = false
+local teleportLoop -- holds the running loop thread
+
+local disappearParts = Trolltower2:CreateToggle({
+	Name = "Make disappear parts disappear.",
+	Description = nil,
+	CurrentValue = false,
+	Callback = function(Value)
+		Disappearparts = Value
+
+		if Disappearparts then
+			-- Start teleport loop
+			teleportLoop = task.spawn(function()
+				while Disappearparts do
+					local parts = workspace:GetChildren()
+					local plr = game.Players.LocalPlayer
+					local char = plr.Character or plr.CharacterAdded:Wait()
+					local root = char:FindFirstChild("HumanoidRootPart")
+
+					for _, v in pairs(parts) do
+						if v:IsA("BasePart") and v.Name == "사라지는 파트" then
+							root.CFrame = v.CFrame
+							task.wait(0.2) -- delay between teleports
+						end
+					end
+
+					task.wait(0.5) -- delay between loops
+				end
+			end)
+		else
+			-- Stop loop by setting flag to false (loop will exit)
+			Disappearparts = false
+		end
+	end
+}, "troll")
+
+
+end
+
+local ScriptTab = Window:CreateTab({
+	Name = "Other Scripts",
+	Icon = "view_in_ar",
+	ImageSource = "Material",
+	ShowTitle = true
+})
+
+local IYbtn = Tab:CreateButton({
+	Name = "Infinite Yeild",
+	Description = nil,
+    	Callback = function()
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    	end
+})
+
+local redzbtn = Tab:CreateButton({
+	Name = "Blox Fruit (redz hub)",
+	Description = nil,
+    	Callback = function()
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/newredz/BloxFruits/refs/heads/main/Source.luau"))(Settings)
+    	end
+})
+
+local nathub = Tab:CreateButton({
+	Name = "Dead Rails (Nat hub)",
+	Description = nil,
+    	Callback = function()
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))()
+
+    	end
+})
+
+local PRbtn = Tab:CreateButton({
+	Name = "Prison Life (Prison ware)",
+	Description = nil,
+    	Callback = function()
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/Denverrz/scripts/master/PRISONWARE_v1.3.txt"))();
+    	end
+})
+
+local Settings = Window:CreateTab({
+	Name = "Settings",
+	Icon = "view_in_ar",
+	ImageSource = "Lucide",
+	ShowTitle = true
+})
+
+local ScriptURL = ""
+
+-- Rejoin Button
+local Rejoin = Settings:CreateButton({
+	Name = "Rejoin",
+	Description = "Rejoins the current server and re-executes script.",
+	Callback = function()
+		local TeleportService = game:GetService("TeleportService")
+		local LocalPlayer = game.Players.LocalPlayer
+		TeleportService:Teleport(game.PlaceId, LocalPlayer)
+		
+		-- Re-execute script on teleport
+		syn.queue_on_teleport("loadstring(game:HttpGet('" .. ScriptURL .. "'))()")
+	end
+})
+
+-- Server Hop Button
+local Serverhop = Settings:CreateButton({
+	Name = "Server Hop",
+	Description = "Hops to a different server and re-executes script.",
+	Callback = function()
+		local HttpService = game:GetService("HttpService")
+		local TeleportService = game:GetService("TeleportService")
+		local Player = game.Players.LocalPlayer
+
+		local success, servers = pcall(function()
+			return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
+		end)
+
+		if success and servers and servers.data then
+			for _, server in pairs(servers.data) do
+				if server.playing < server.maxPlayers and server.id ~= game.JobId then
+					syn.queue_on_teleport("loadstring(game:HttpGet('" .. ScriptURL .. "'))()")
+					TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, Player)
+					break
+				end
+			end
+		end
+	end
+})
+
+-- Anti-AFK Toggle
+local AntiAFKConnection
+
+local AntiAfk = Settings:CreateToggle({
+	Name = "Anti-AFK",
+	Description = "Prevents you from getting kicked for inactivity.",
+	Default = false,
+	Callback = function(state)
+		if state then
+			local vu = game:GetService("VirtualUser")
+			AntiAFKConnection = game.Players.LocalPlayer.Idled:Connect(function()
+				vu:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+				task.wait(1)
+				vu:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+			end)
+		else
+			if AntiAFKConnection then
+				AntiAFKConnection:Disconnect()
+				AntiAFKConnection = nil
+			end
+		end
+	end
+})
+
+Tab:CreateSection("Player")
+local Slider = Tab:CreateSlider({
+	Name = "Speed",
+	Range = {0, 200}, -- The Minimum And Maximum Values Respectively
+	Increment = 5, -- Basically The Changing Value/Rounding Off
+	CurrentValue = 16, -- The Starting Value
+    	Callback = function(Value)
+ game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+    	end
+}, "SpeedSlider")
+local Slider = Tab:CreateSlider({
+	Name = "Jump Power",
+	Range = {0, 200}, -- The Minimum And Maximum Values Respectively
+	Increment = 5, -- Basically The Changing Value/Rounding Off
+	CurrentValue = 50,
+    	Callback = function(Value)
+ game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+    	end
+}, "Jump")
+local Slider = Tab:CreateSlider({
+	Name = "Jump Height",
+	Range = {0, 200},
+	Increment = 5,
+	CurrentValue = 7, -- The Starting Value
+    	Callback = function(Value)
+       	 game.Players.LocalPlayer.Character.Humanoid.JumpHeight = Value
+    	end
+}, "JumpHeight")
+
+local infiniteJumpEnabled = false
+local Infinitejump = Tab:CreateToggle({
+	Name = "Infinite Jump",
+	Description = "Enable Infinite Jump make you jump even in midairs!.",
+	CurrentValue = false,
+    	Callback = function(Value)
+       	 infiniteJumpEnabled = Value
+    	end
+}, "Infinite Jump")
+
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if infiniteJumpEnabled then
+        local character = game.Players.LocalPlayer.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end
+end)
+
+local tpPlayer = Tab:CreateInput({
+	Name = "Tween to Player",
+	Description = "Tween teleports to the player you typed.",
+	PlaceholderText = "Put Player name here",
+	CurrentValue = "", -- the current text
+	Numeric = false,
+	MaxCharacters = nil,
+  Enter = true,
+  Callback = function(Text)
+          local ts = game:GetService("TweenService")
+          local ti = TweenInfo.new(1, Enum.EasingStyle.Linear)
+       	 local targetPlayer = game.Players:FindFirstChild(Text)
+local plr = game.Players.LocalPlayer
+local char = plr.Character
+local root = char:WaitForChild("HumanoidRootPart")
+local targetChar = targetPlayer.Character
+local targetRoot = targetChar:FindFirstChild("HumanoidRootPart")
+
+local Goal = {}
+Goal.CFrame = targetRoot.CFrame
+
+local Tween = ts:Create(root, ti, Goal)
+Tween:Play()
+
+    	end
+}, "TweenTp")
+
+local noclipEnabled = false
+local Noclip = Tab:CreateToggle({
+	Name = "Noclip",
+	Description = "Enable Noclip to noclip through walls.",
+	CurrentValue = false,
+    	Callback = function(Value)
+       	 noclipEnabled = Value
+          if noclipEnabled then
+            spawn(function()
+                while noclipEnabled and task.wait() do
+                    local character = game.Players.LocalPlayer.Character
+                    if character then
+                        for _, part in ipairs(character:GetDescendants()) do
+                            if part:IsA("BasePart") then
+                                part.CanCollide = false
+                                               end
+                                        end
+                                  end
+                           end
+                   end)
+            end
+    	end
+}, "Noclip")
+
+local ESPEnabled = false
+
+Tab:CreateToggle({
+	Name = "ESP",
+	Description = "Shows boxes, names, health, and distance to players.",
+	CurrentValue = false,
+	Callback = function(Value)
+		ESPEnabled = Value
+	end
+}, "ESP")
+
+-- ESP Core
+local Camera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function CreateESPBox()
+	return {
+		Box = Drawing.new("Square"),
+		Name = Drawing.new("Text"),
+		Distance = Drawing.new("Text"),
+		HealthBar = Drawing.new("Line")
+	}
+end
+
+local function ClearESP(box)
+	for _, v in pairs(box) do
+		if typeof(v) == "table" then
+			ClearESP(v)
+		else
+			pcall(function() v:Destroy() end)
+		end
+	end
+end
+
+local ESPBoxes = {}
+
+RunService.RenderStepped:Connect(function()
+	if not ESPEnabled then
+		for _, v in pairs(ESPBoxes) do
+			ClearESP(v)
+		end
+		ESPBoxes = {}
+		return
+	end
+
+	for _, player in pairs(Players:GetPlayers()) do
+		if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") and player.Character:FindFirstChild("Head") then
+			local hrp = player.Character.HumanoidRootPart
+			local pos, onscreen = Camera:WorldToViewportPoint(hrp.Position)
+			local distance = math.floor((hrp.Position - Camera.CFrame.Position).Magnitude)
+
+			if not ESPBoxes[player] then
+				ESPBoxes[player] = CreateESPBox()
+			end
+
+			local esp = ESPBoxes[player]
+			local size = Vector2.new(40, 60) / (distance / 10)
+			local tl = Vector2.new(pos.X - size.X/2, pos.Y - size.Y/2)
+
+			-- Box
+			esp.Box.Size = size
+			esp.Box.Position = tl
+			esp.Box.Visible = onscreen
+			esp.Box.Color = Color3.fromRGB(0, 255, 0)
+			esp.Box.Thickness = 2
+			esp.Box.Filled = false
+			esp.Box.Transparency = 1
+
+			-- Name
+			esp.Name.Text = player.Name
+			esp.Name.Position = Vector2.new(pos.X, pos.Y - size.Y/2 - 16)
+			esp.Name.Center = true
+			esp.Name.Size = 14
+			esp.Name.Color = Color3.fromRGB(255, 255, 255)
+			esp.Name.Outline = true
+			esp.Name.Visible = onscreen
+
+			-- Distance
+			esp.Distance.Text = tostring(distance) .. "m"
+			esp.Distance.Position = Vector2.new(pos.X, pos.Y + size.Y/2 + 2)
+			esp.Distance.Center = true
+			esp.Distance.Size = 13
+			esp.Distance.Color = Color3.fromRGB(200, 200, 200)
+			esp.Distance.Outline = true
+			esp.Distance.Visible = onscreen
+
+			-- Health bar
+			local healthRatio = player.Character.Humanoid.Health / player.Character.Humanoid.MaxHealth
+			esp.HealthBar.From = Vector2.new(tl.X - 5, tl.Y + size.Y)
+			esp.HealthBar.To = Vector2.new(tl.X - 5, tl.Y + size.Y - (size.Y * healthRatio))
+			esp.HealthBar.Color = Color3.fromRGB(255 - (255 * healthRatio), 255 * healthRatio, 0)
+			esp.HealthBar.Thickness = 2
+			esp.HealthBar.Visible = onscreen
+		else
+			if ESPBoxes[player] then
+				ClearESP(ESPBoxes[player])
+				ESPBoxes[player] = nil
+			end
+		end
+	end
+end)
