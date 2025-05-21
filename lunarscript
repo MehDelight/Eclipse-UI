@@ -228,7 +228,7 @@ local Settings = Window:CreateTab({
 	ShowTitle = true
 })
 
-local ScriptURL = ""
+local ScriptURL = "https://raw.githubusercontent.com/MehDelight/Eclipse-UI/refs/heads/main/lunarscript"
 
 -- Rejoin Button
 local Rejoin = Settings:CreateButton({
