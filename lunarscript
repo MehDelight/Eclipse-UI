@@ -188,7 +188,7 @@ local ScriptTab = Window:CreateTab({
 	ShowTitle = true
 })
 
-local IYbtn = Tab:CreateButton({
+local IYbtn = ScriptTab:CreateButton({
 	Name = "Infinite Yeild",
 	Description = nil,
     	Callback = function()
@@ -196,7 +196,7 @@ local IYbtn = Tab:CreateButton({
     	end
 })
 
-local redzbtn = Tab:CreateButton({
+local redzbtn = ScriptTab:CreateButton({
 	Name = "Blox Fruit (redz hub)",
 	Description = nil,
     	Callback = function()
@@ -204,7 +204,7 @@ local redzbtn = Tab:CreateButton({
     	end
 })
 
-local nathub = Tab:CreateButton({
+local nathub = ScriptTab:CreateButton({
 	Name = "Dead Rails (Nat hub)",
 	Description = nil,
     	Callback = function()
@@ -213,7 +213,7 @@ local nathub = Tab:CreateButton({
     	end
 })
 
-local PRbtn = Tab:CreateButton({
+local PRbtn = ScriptTab:CreateButton({
 	Name = "Prison Life (Prison ware)",
 	Description = nil,
     	Callback = function()
