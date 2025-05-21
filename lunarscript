@@ -49,7 +49,7 @@ local Tab = Window:CreateTab({
 	ShowTitle = true
 })
 
-if game.PlaceId == 1962086868 then
+if game.PlaceId == 1962086868 or game.PlaceId == 5253186791 then
 local Toh = Window:CreateTab({
 	Name = "Tower of hell",
 	Icon = "view_in_ar",
