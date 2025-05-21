@@ -224,7 +224,7 @@ local PRbtn = ScriptTab:CreateButton({
 local Settings = Window:CreateTab({
 	Name = "Settings",
 	Icon = "view_in_ar",
-	ImageSource = "Lucide",
+	ImageSource = "Material",
 	ShowTitle = true
 })
 
@@ -294,7 +294,7 @@ local AntiAfk = Settings:CreateToggle({
 })
 
 Tab:CreateSection("Player")
-local Slider = Tab:CreateSlider({
+local Speed = Tab:CreateSlider({
 	Name = "Speed",
 	Range = {0, 200}, -- The Minimum And Maximum Values Respectively
 	Increment = 5, -- Basically The Changing Value/Rounding Off
@@ -303,7 +303,7 @@ local Slider = Tab:CreateSlider({
  game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
     	end
 }, "SpeedSlider")
-local Slider = Tab:CreateSlider({
+local Jump = Tab:CreateSlider({
 	Name = "Jump Power",
 	Range = {0, 200}, -- The Minimum And Maximum Values Respectively
 	Increment = 5, -- Basically The Changing Value/Rounding Off
@@ -312,7 +312,7 @@ local Slider = Tab:CreateSlider({
  game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
     	end
 }, "Jump")
-local Slider = Tab:CreateSlider({
+local Height = Tab:CreateSlider({
 	Name = "Jump Height",
 	Range = {0, 200},
 	Increment = 5,
