@@ -84,7 +84,7 @@ script2:Destroy()
 
 local tpBtn = Toh:CreateButton({
 	Name = "Teleport to end",
-	Description = nil,
+	Description = "This can get you banned",
     	Callback = function()
          local plr = game.Players.LocalPlayer
          local char = plr.Character
@@ -308,6 +308,8 @@ local AntiAfk = SettingsTab:CreateToggle({
 		end
 	end
 })
+
+SettingsTab:BuildThemeSection() -- Tab Should be the name of the tab you are adding this section to.
 
 Tab:CreateSection("Player")
 local Speed = Tab:CreateSlider({
