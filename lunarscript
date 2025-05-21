@@ -33,7 +33,7 @@ Luna:Notification({
 	Title = "Lunar X Loaded!",
 	Icon = "notifications_active",
 	ImageSource = "Material",
-	Content = "Eclipse Hub has Loaded successfully!."
+	Content = "Lunar Hub has Loaded successfully!."
 })
 
 Window:CreateHomeTab({
@@ -79,6 +79,18 @@ end
 
 script1:Destroy()
 script2:Destroy()
+    	end
+})
+
+local tpBtn = Toh:CreateButton({
+	Name = "Teleport to end",
+	Description = nil,
+    	Callback = function()
+         local plr = game.Players.LocalPlayer
+         local char = plr.Character
+         local root = char:WaitForChild("HumanoidRootPart")
+         local tpgoal = game.tower.sections.finish.exit.carpet
+         root.CFrame = tpgoal.CFrame + Vector3.new(0, 5, 0)
     	end
 })
 
