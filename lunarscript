@@ -221,7 +221,7 @@ local PRbtn = ScriptTab:CreateButton({
     	end
 })
 
-local Settings = Window:CreateTab({
+local SettingsTab = Window:CreateTab({
 	Name = "Settings",
 	Icon = "view_in_ar",
 	ImageSource = "Material",
@@ -231,7 +231,7 @@ local Settings = Window:CreateTab({
 local ScriptURL = "https://raw.githubusercontent.com/MehDelight/Eclipse-UI/refs/heads/main/lunarscript"
 
 -- Rejoin Button
-local Rejoin = Settings:CreateButton({
+local Rejoin = SettingsTab:CreateButton({
 	Name = "Rejoin",
 	Description = "Rejoins the current server and re-executes script.",
 	Callback = function()
@@ -240,12 +240,14 @@ local Rejoin = Settings:CreateButton({
 		TeleportService:Teleport(game.PlaceId, LocalPlayer)
 		
 		-- Re-execute script on teleport
-		syn.queue_on_teleport("loadstring(game:HttpGet('" .. ScriptURL .. "'))()")
+		if queue_on_teleport then
+    queue_on_teleport("loadstring(game:HttpGet('" .. ScriptURL .. "'))()")
+end
 	end
 })
 
 -- Server Hop Button
-local Serverhop = Settings:CreateButton({
+local Serverhop = SettingsTab:CreateButton({
 	Name = "Server Hop",
 	Description = "Hops to a different server and re-executes script.",
 	Callback = function()
@@ -260,7 +262,9 @@ local Serverhop = Settings:CreateButton({
 		if success and servers and servers.data then
 			for _, server in pairs(servers.data) do
 				if server.playing < server.maxPlayers and server.id ~= game.JobId then
-					syn.queue_on_teleport("loadstring(game:HttpGet('" .. ScriptURL .. "'))()")
+					if queue_on_teleport then
+    queue_on_teleport("loadstring(game:HttpGet('" .. ScriptURL .. "'))()")
+end
 					TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, Player)
 					break
 				end
@@ -272,7 +276,7 @@ local Serverhop = Settings:CreateButton({
 -- Anti-AFK Toggle
 local AntiAFKConnection
 
-local AntiAfk = Settings:CreateToggle({
+local AntiAfk = SettingsTab:CreateToggle({
 	Name = "Anti-AFK",
 	Description = "Prevents you from getting kicked for inactivity.",
 	Default = false,
